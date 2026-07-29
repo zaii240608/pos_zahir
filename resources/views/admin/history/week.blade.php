@@ -19,11 +19,11 @@
                 <!-- Tombol Switcher Bulanan / Mingguan -->
                 <div class="flex items-center gap-2 bg-stone-100 p-1.5 rounded-2xl border border-stone-200/60">
                     <a href="{{ route('admin.history.index') }}" 
-                    class="px-4 py-2 rounded-xl text-xs font-bold text-stone-500 hover:text-stone-900 transition-all">
+                       class="px-4 py-2 rounded-xl text-xs font-bold text-stone-500 hover:text-stone-900 transition-all">
                         Bulanan
                     </a>
                     <a href="{{ route('admin.history.week') }}" 
-                    class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-white text-stone-900 shadow-sm">
+                       class="px-4 py-2 rounded-xl text-xs font-bold transition-all bg-white text-stone-900 shadow-sm">
                         Mingguan
                     </a>
                 </div>
@@ -31,26 +31,45 @@
 
             @if(!empty($historyMingguan) && count($historyMingguan) > 0)
                 @php
-                    // Menyiapkan data label & nilai omzet untuk Chart Mingguan
-                    $chartLabels = [];
-                    $chartData = [];
+                    // Helper format rupiah singkat
+                    $formatRingkas = function($nominal) {
+                        if ($nominal >= 1000000000) {
+                            return number_format($nominal / 1000000000, 1, ',', '.') . 'M';
+                        } elseif ($nominal >= 1000000) {
+                            return number_format($nominal / 1000000, 1, ',', '.') . 'Jt';
+                        }
+                        return number_format($nominal, 0, ',', '.');
+                    };
+
+                    // Hitung Grand Total
                     $grandTotalOmzet = 0;
                     $grandTotalTransaksi = 0;
 
                     foreach($historyMingguan as $item) {
-                        // Misal format $item: 'minggu' (Minggu 1, Minggu 2), 'total_omzet', 'total_transaksi'
-                        $chartLabels[] = $item->label_minggu ?? ('Minggu ' . $item->minggu_ke);
-                        $chartData[] = (float) $item->total_omzet;
-                        $grandTotalOmzet += $item->total_omzet;
-                        $grandTotalTransaksi += $item->total_transaksi;
+                        $grandTotalOmzet += (float) ($item->total_omzet ?? 0);
+                        $grandTotalTransaksi += (int) ($item->total_transaksi ?? 0);
                     }
 
-                    $totalData = count($chartLabels);
+                    $totalData = count($historyMingguan);
                     $minWidthPx = max(100, $totalData * 110); 
                     $rataRataMingguan = $totalData > 0 ? $grandTotalOmzet / $totalData : 0;
+
+                    // Dibalik khusus grafik agar kronologis dari kiri (lama) ke kanan (terbaru)
+                    $historyForChart = is_array($historyMingguan) 
+                        ? array_reverse($historyMingguan) 
+                        : $historyMingguan->reverse();
+
+                    $chartLabels = [];
+                    $chartData = [];
+
+                    foreach($historyForChart as $item) {
+                        $label = $item->label_minggu ?? (isset($item->minggu_ke) ? 'Minggu ' . $item->minggu_ke : 'Minggu');
+                        $chartLabels[] = $label;
+                        $chartData[] = (float) ($item->total_omzet ?? 0);
+                    }
                 @endphp
 
-                <!-- Summary Cards Section -->
+                <!-- Summary Cards Section (Disamakan dengan layout Bulanan) -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <!-- Card 1: Total Omzet -->
                     <div class="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-sm flex items-center justify-between">
@@ -78,7 +97,7 @@
                     <div class="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-sm flex items-center justify-between">
                         <div>
                             <p class="text-xs font-semibold text-stone-400 uppercase tracking-wider">Rata-rata / Minggu</p>
-                            <h3 class="text-2xl font-black text-stone-900 mt-1">Rp {{ number_format($rataRataMingguan, 0, ',', '.') }}</h3>
+                            <h3 class="text-2xl font-black text-stone-900 mt-1">Rp {{ $formatRingkas($rataRataMingguan) }}</h3>
                         </div>
                         <div class="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
@@ -86,7 +105,7 @@
                     </div>
                 </div>
 
-                <!-- Section Grafik Tren Mingguan (SLIDER / SCROLLABLE) -->
+                <!-- Section Grafik Tren Mingguan (Scrollable Container) -->
                 <div class="bg-white p-6 rounded-3xl border border-stone-200/80 shadow-sm">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
                         <div>
@@ -101,7 +120,7 @@
                         </div>
                     </div>
 
-                    <!-- Slider Container -->
+                    <!-- Chart Container -->
                     <div id="chartScrollContainer" class="w-full overflow-x-auto pb-4 custom-scrollbar">
                         <div class="relative h-72 sm:h-80" style="min-width: max(100%, {{ $minWidthPx }}px);">
                             <canvas id="weekChart"></canvas>
@@ -119,10 +138,10 @@
                                     <div>
                                         <span class="text-[11px] font-extrabold text-indigo-600 uppercase tracking-wider">Periode</span>
                                         <h3 class="text-xl font-black text-stone-900 mt-0.5">
-                                            {{ $item->label_minggu ?? ('Minggu ke-' . $item->minggu_ke) }}
+                                            {{ $item->label_minggu ?? ('Minggu ke-' . ($item->minggu_ke ?? '-')) }}
                                         </h3>
                                         @if(!empty($item->rentang_tanggal))
-                                            <p class="text-[11px] text-stone-400 font-medium">{{ $item->rentang_tanggal }}</p>
+                                            <p class="text-[11px] text-stone-400 font-medium mt-0.5">{{ $item->rentang_tanggal }}</p>
                                         @endif
                                     </div>
                                     <div class="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
@@ -132,11 +151,11 @@
                                 <div class="space-y-2 text-xs font-medium text-stone-500 border-t border-stone-100 pt-4">
                                     <p class="flex justify-between items-center">
                                         <span>Total Omzet:</span> 
-                                        <span class="text-indigo-600 font-black text-sm">Rp {{ number_format($item->total_omzet, 0, ',', '.') }}</span>
+                                        <span class="text-indigo-600 font-black text-sm">Rp {{ number_format($item->total_omzet ?? 0, 0, ',', '.') }}</span>
                                     </p>
                                     <p class="flex justify-between items-center">
                                         <span>Total Transaksi:</span> 
-                                        <span class="text-stone-900 font-bold">{{ $item->total_transaksi }} Transaksi</span>
+                                        <span class="text-stone-900 font-bold">{{ number_format($item->total_transaksi ?? 0, 0, ',', '.') }} Transaksi</span>
                                     </p>
                                 </div>
                             </div>
@@ -158,7 +177,7 @@
         </div>
     </div>
 
-    <!-- Custom Scrollbar Style -->
+    <!-- Custom Scrollbar Style (Sama dengan Bulanan) -->
     <style>
         .custom-scrollbar::-webkit-scrollbar {
             height: 6px;
@@ -181,10 +200,13 @@
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                const ctx = document.getElementById('weekChart').getContext('2d');
+                const weekCanvas = document.getElementById('weekChart');
+                if (!weekCanvas) return;
+
+                const ctx = weekCanvas.getContext('2d');
 
                 const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-                gradient.addColorStop(0, 'rgba(99, 102, 241, 0.25)'); // Aksen Indigo
+                gradient.addColorStop(0, 'rgba(99, 102, 241, 0.25)'); // Indigo accent
                 gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
 
                 new Chart(ctx, {
@@ -238,8 +260,9 @@
                                     font: { size: 11 },
                                     color: '#78716c',
                                     callback: function(value) {
-                                        if (value >= 1000000) return 'Rp ' + (value / 1000000) + ' Jt';
-                                        if (value >= 1000) return 'Rp ' + (value / 1000) + ' Rb';
+                                        if (value >= 1000000000) return 'Rp ' + (value / 1000000000).toFixed(1) + ' M';
+                                        if (value >= 1000000) return 'Rp ' + (value / 1000000).toFixed(1) + ' Jt';
+                                        if (value >= 1000) return 'Rp ' + (value / 1000).toFixed(0) + ' Rb';
                                         return 'Rp ' + value;
                                     }
                                 }
@@ -248,11 +271,13 @@
                     }
                 });
 
-                // Auto-scroll slider ke minggu paling kanan (terbaru)
-                const scrollContainer = document.getElementById('chartScrollContainer');
-                if (scrollContainer) {
-                    scrollContainer.scrollLeft = scrollContainer.scrollWidth;
-                }
+                // Scroll otomatis slider ke data paling kanan (minggu terbaru)
+                setTimeout(() => {
+                    const scrollContainer = document.getElementById('chartScrollContainer');
+                    if (scrollContainer) {
+                        scrollContainer.scrollLeft = scrollContainer.scrollWidth;
+                    }
+                }, 100);
             });
         </script>
     @endif

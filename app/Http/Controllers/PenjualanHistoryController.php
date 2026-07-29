@@ -13,7 +13,7 @@ class PenjualanHistoryController extends Controller
     public function index()
     {
         $historyBulanan = Penjualan::selectRaw('YEAR(created_at) as tahun, MONTH(created_at) as bulan, SUM(total_pembayaran) as total_omzet, COUNT(*) as total_transaksi')
-            ->groupBy('tahun', 'bulan')
+            ->groupByRaw('YEAR(created_at), MONTH(created_at)')
             ->orderBy('tahun', 'desc')
             ->orderBy('bulan', 'desc')
             ->get();
@@ -24,20 +24,20 @@ class PenjualanHistoryController extends Controller
     // Menampilkan rekap penjualan per Minggu
     public function showWeek()
     {
+        // Parameter 3 di WEEK() MySQL disesuaikan dengan ISO-8601 agar presisi dengan Carbon setISODate
         $historyMingguanRaw = Penjualan::selectRaw('
                 YEAR(created_at) as tahun,
-                WEEK(created_at, 1) as minggu_ke,
+                WEEK(created_at, 3) as minggu_ke,
                 SUM(total_pembayaran) as total_omzet,
                 COUNT(*) as total_transaksi
             ')
-            ->groupBy('tahun', 'minggu_ke')
+            ->groupByRaw('YEAR(created_at), WEEK(created_at, 3)')
             ->orderBy('tahun', 'desc')
             ->orderBy('minggu_ke', 'desc')
             ->get();
 
         // Format label minggu & rentang tanggal yang akurat (Senin - Minggu)
         $historyMingguan = $historyMingguanRaw->map(function ($item) {
-            // Menghitung tanggal Senin & Minggu berdasarkan ISO Week
             $date = Carbon::now()->setISODate($item->tahun, $item->minggu_ke);
             $start = $date->copy()->startOfWeek();
             $end = $date->copy()->endOfWeek();
@@ -51,7 +51,7 @@ class PenjualanHistoryController extends Controller
         return view('admin.history.week', compact('historyMingguan'));
     }
 
-    // Menampilkan daftar hari di bulan tertentu (Misal: Bulan Juli 2026)
+    // Menampilkan daftar hari di bulan tertentu
     public function showMonth($tahun, $bulan)
     {
         // 1. Data Rekap Harian untuk Grid
@@ -62,11 +62,10 @@ class PenjualanHistoryController extends Controller
             ->orderBy('tanggal', 'desc')
             ->get();
 
-        // 2. Data Summary Rekap Bulan untuk Card Informasi Atas (diperlukan oleh month.blade.php)
+        // 2. Data Summary Rekap Bulan untuk Card Informasi
         $totalOmzet = $historyHarian->sum('total_omzet');
         $totalTransaksi = $historyHarian->sum('total_transaksi');
         
-        // Menghitung total barang/item terjual di bulan tersebut
         $totalProdukTerjual = ItemPenjualan::whereHas('penjualan', function($q) use ($tahun, $bulan) {
             $q->whereYear('created_at', $tahun)
               ->whereMonth('created_at', $bulan);

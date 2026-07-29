@@ -22,33 +22,33 @@
                             <span>Bulanan</span>
                         </a>
                         <a href="{{ route('admin.history.week') }}" class="flex items-center space-x-1.5 hover:text-slate-800 transition pb-2 -mb-4">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v25a1 1 0 01-1 1H4a1 1 0 01-1-1V4z"></path></svg>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             <span>Mingguan</span>
-                        </a>
-                        <a href="#" class="flex items-center space-x-1.5 hover:text-slate-800 transition pb-2 -mb-4">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                            <span>Performa</span>
-                        </a>
-                        <a href="#" class="flex items-center space-x-1.5 hover:text-slate-800 transition pb-2 -mb-4">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
-                            <span>Pengaturan</span>
                         </a>
                     </div>
 
                     <!-- Date Selector Right Side -->
                     <div class="flex items-center justify-end space-x-3 text-xs text-slate-500 font-medium">
-                        <span>Rekapitulasi Tahun {{ date('Y') }}</span>
-                        <div class="flex items-center space-x-1 bg-slate-100 hover:bg-slate-200/80 px-3 py-1.5 rounded-lg border border-slate-200 cursor-pointer transition text-slate-800 font-bold">
-                            <button>&lt;</button>
+                        <span>Rekapitulasi Total</span>
+                        <div class="flex items-center space-x-1 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200 text-slate-800 font-bold">
                             <span>Semua Bulan</span>
-                            <button>&gt;</button>
                         </div>
                     </div>
                 </div>
 
                 @if($historyBulanan->isNotEmpty())
                     @php
-                        // Menyiapkan data kronologis
+                        // Helper format rupiah singkat (Jt / M)
+                        $formatRingkas = function($nominal) {
+                            if ($nominal >= 1000000000) {
+                                return number_format($nominal / 1000000000, 1, ',', '.') . 'M';
+                            } elseif ($nominal >= 1000000) {
+                                return number_format($nominal / 1000000, 1, ',', '.') . 'Jt';
+                            }
+                            return number_format($nominal, 0, ',', '.');
+                        };
+
+                        // Menyiapkan data kronologis untuk Chart
                         $sortedHistory = $historyBulanan->sortBy(function($item) {
                             return sprintf('%04d%02d', $item->tahun, $item->bulan);
                         });
@@ -65,8 +65,11 @@
 
                         $grandTotalOmzet = $historyBulanan->sum('total_omzet');
                         $grandTotalTransaksi = $historyBulanan->sum('total_transaksi');
-                        $rataRataOmzet = $historyBulanan->count() > 0 ? $grandTotalOmzet / $historyBulanan->count() : 0;
-                        $rataRataTransaksi = $historyBulanan->count() > 0 ? round($grandTotalTransaksi / $historyBulanan->count()) : 0;
+                        $jumlahBulan = $historyBulanan->count() > 0 ? $historyBulanan->count() : 1;
+                        
+                        $rataRataOmzet = $grandTotalOmzet / $jumlahBulan;
+                        $rataRataTransaksi = round($grandTotalTransaksi / $jumlahBulan);
+                        $maxOmzet = $historyBulanan->max('total_omzet');
                     @endphp
 
                     <!-- 2. Main KPI Metrics Row (Header Ringkasan) -->
@@ -75,14 +78,10 @@
                         <div>
                             <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center space-x-1">
                                 <span>Total Omzet</span>
-                                <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                             <div class="flex items-baseline space-x-2 mt-1">
                                 <span class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                                    Rp {{ $grandTotalOmzet >= 1000000 ? number_format($grandTotalOmzet / 1000000, 1, ',', '.') . 'M' : number_format($grandTotalOmzet, 0, ',', '.') }}
-                                </span>
-                                <span class="inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-rose-100 text-rose-600">
-                                    +14%
+                                    Rp {{ $formatRingkas($grandTotalOmzet) }}
                                 </span>
                             </div>
                         </div>
@@ -96,9 +95,6 @@
                                 <span class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
                                     {{ number_format($grandTotalTransaksi, 0, ',', '.') }}
                                 </span>
-                                <span class="inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-600">
-                                    +8%
-                                </span>
                             </div>
                         </div>
 
@@ -106,14 +102,10 @@
                         <div>
                             <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center space-x-1">
                                 <span>Rata-rata / Bulan</span>
-                                <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                             </div>
                             <div class="flex items-baseline space-x-2 mt-1">
                                 <span class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                                    Rp {{ number_format($rataRataOmzet / 1000000, 1, ',', '.') }}M
-                                </span>
-                                <span class="inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-rose-100 text-rose-600">
-                                    -2%
+                                    Rp {{ $formatRingkas($rataRataOmzet) }}
                                 </span>
                             </div>
                         </div>
@@ -132,7 +124,7 @@
                         </div>
                     </div>
 
-                    <!-- 3. Sparkline Cards Grid (Kartu Kecil dengan Mini Chart) -->
+                    <!-- 3. Sparkline Cards Grid -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
                         <!-- Mini Card 1 -->
                         <div class="bg-cyan-50/40 border border-cyan-100 rounded-xl p-4 flex flex-col justify-between hover:border-cyan-300 transition">
@@ -141,7 +133,7 @@
                                 <canvas id="sparkline1"></canvas>
                             </div>
                             <div class="text-xl font-bold text-slate-800">
-                                Rp {{ number_format($historyBulanan->max('total_omzet') / 1000000, 1, ',', '.') }}M
+                                Rp {{ $formatRingkas($maxOmzet) }}
                             </div>
                         </div>
 
@@ -152,22 +144,22 @@
                                 <canvas id="sparkline2"></canvas>
                             </div>
                             <div class="text-xl font-bold text-slate-800">
-                                {{ $rataRataTransaksi }} <span class="text-xs font-normal text-slate-500">trx/bln</span>
+                                {{ number_format($rataRataTransaksi, 0, ',', '.') }} <span class="text-xs font-normal text-slate-500">trx/bln</span>
                             </div>
                         </div>
 
                         <!-- Mini Card 3 -->
                         <div class="bg-cyan-50/40 border border-cyan-100 rounded-xl p-4 flex flex-col justify-between hover:border-cyan-300 transition">
-                            <span class="text-xs font-semibold text-slate-600">Performa Omzet</span>
+                            <span class="text-xs font-semibold text-slate-600">Rata-rata / Transaksi</span>
                             <div class="h-10 my-2">
                                 <canvas id="sparkline3"></canvas>
                             </div>
                             <div class="text-xl font-bold text-slate-800">
-                                98.4<span class="text-xs font-normal text-slate-500">% Target</span>
+                                Rp {{ $grandTotalTransaksi > 0 ? number_format($grandTotalOmzet / $grandTotalTransaksi, 0, ',', '.') : 0 }}
                             </div>
                         </div>
 
-                        <!-- Mini Card 4 (Active/Selected Card) -->
+                        <!-- Mini Card 4 -->
                         <div class="bg-cyan-50 border-2 border-cyan-400 rounded-xl p-4 flex flex-col justify-between shadow-sm relative">
                             <span class="text-xs font-semibold text-cyan-900">Total Bulan Tercatat</span>
                             <div class="h-10 my-2">
@@ -179,36 +171,28 @@
                         </div>
                     </div>
 
-                    <!-- 4. Main Chart Section (Grafik Area Besar) -->
+                    <!-- 4. Main Chart Section -->
                     <div class="pt-4 relative">
                         <div class="h-80 sm:h-96 w-full">
                             <canvas id="mainAnalyticsChart"></canvas>
                         </div>
 
-                        <!-- Chart Legends / Filters di Pojok Kanan Bawah -->
+                        <!-- Chart Controls -->
                         <div class="flex flex-wrap items-center justify-end gap-4 text-xs font-medium text-slate-600 mt-4 border-t border-slate-100 pt-3">
                             <label class="inline-flex items-center space-x-1.5 cursor-pointer">
-                                <input type="checkbox" checked class="rounded border-slate-300 text-cyan-500 focus:ring-cyan-400">
-                                <span>Garis Tren</span>
-                            </label>
-                            <label class="inline-flex items-center space-x-1.5 cursor-pointer">
-                                <input type="checkbox" class="rounded border-slate-300 text-cyan-500 focus:ring-cyan-400">
-                                <span>Bandingkan Filter</span>
-                            </label>
-                            <label class="inline-flex items-center space-x-1.5 cursor-pointer">
                                 <input type="checkbox" checked id="toggleOmzet" class="rounded border-slate-300 text-cyan-500 focus:ring-cyan-400">
-                                <span class="flex items-center"><span class="w-2.5 h-2.5 rounded-sm bg-sky-400 mr-1.5"></span> Total Omzet</span>
+                                <span class="flex items-center"><span class="w-2.5 h-2.5 rounded-sm bg-sky-600 mr-1.5"></span> Total Omzet</span>
                             </label>
                             <label class="inline-flex items-center space-x-1.5 cursor-pointer">
                                 <input type="checkbox" checked id="toggleTransaksi" class="rounded border-slate-300 text-cyan-500 focus:ring-cyan-400">
-                                <span class="flex items-center"><span class="w-2.5 h-2.5 rounded-sm bg-cyan-200 border border-cyan-400 mr-1.5"></span> Transaksi</span>
+                                <span class="flex items-center"><span class="w-2.5 h-2.5 rounded-sm bg-cyan-400 mr-1.5"></span> Transaksi</span>
                             </label>
                         </div>
                     </div>
                 @endif
             </div>
 
-            <!-- 5. Grid List Data Bulan (Atas Nama Rincian) -->
+            <!-- 5. Grid List Data Bulan -->
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
                     <h2 class="text-base font-bold text-slate-800 tracking-tight">Rincian Data Per Bulan</h2>
@@ -267,15 +251,13 @@
                 if (mainCanvas) {
                     const ctx = mainCanvas.getContext('2d');
 
-                    // Gradient Omzet (Top Area)
                     const gradOmzet = ctx.createLinearGradient(0, 0, 0, 300);
-                    gradOmzet.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
-                    gradOmzet.addColorStop(1, 'rgba(56, 189, 248, 0.02)');
+                    gradOmzet.addColorStop(0, 'rgba(2, 132, 199, 0.35)');
+                    gradOmzet.addColorStop(1, 'rgba(2, 132, 199, 0.01)');
 
-                    // Gradient Transaksi (Bottom Area)
                     const gradTrx = ctx.createLinearGradient(0, 0, 0, 300);
-                    gradTrx.addColorStop(0, 'rgba(186, 230, 253, 0.6)');
-                    gradTrx.addColorStop(1, 'rgba(186, 230, 253, 0.05)');
+                    gradTrx.addColorStop(0, 'rgba(56, 189, 248, 0.3)');
+                    gradTrx.addColorStop(1, 'rgba(56, 189, 248, 0.01)');
 
                     const mainChart = new Chart(ctx, {
                         type: 'line',
@@ -294,7 +276,6 @@
                                     pointBorderColor: '#ffffff',
                                     pointBorderWidth: 2,
                                     pointRadius: 4,
-                                    pointHoverRadius: 6,
                                     yAxisID: 'y'
                                 },
                                 {
@@ -324,8 +305,6 @@
                                 legend: { display: false },
                                 tooltip: {
                                     backgroundColor: '#0f172a',
-                                    titleFont: { size: 12, weight: 'bold' },
-                                    bodyFont: { size: 12 },
                                     padding: 10,
                                     cornerRadius: 8,
                                     callbacks: {
@@ -352,7 +331,9 @@
                                         font: { size: 11 },
                                         color: '#64748b',
                                         callback: function(v) {
-                                            return v >= 1000000 ? (v/1000000) + 'M' : v;
+                                            if (v >= 1000000000) return (v/1000000000) + 'M';
+                                            if (v >= 1000000) return (v/1000000) + 'Jt';
+                                            return v;
                                         }
                                     }
                                 },
@@ -366,7 +347,6 @@
                         }
                     });
 
-                    // Toggle dataset via checkbox
                     document.getElementById('toggleOmzet').addEventListener('change', function(e) {
                         mainChart.setDatasetVisibility(0, e.target.checked);
                         mainChart.update();
@@ -377,7 +357,7 @@
                     });
                 }
 
-                // --- 2. Helper Sparkline Charts (Mini Cards) ---
+                // Helper Sparkline Charts
                 const sparklineOptions = {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -405,9 +385,9 @@
                     });
                 };
 
-                createSparkline('sparkline1', dataOmzet, '#38bdf8');
-                createSparkline('sparkline2', dataTransaksi, '#0284c7');
-                createSparkline('sparkline3', dataOmzet.map(v => v * 0.9), '#0284c7');
+                createSparkline('sparkline1', dataOmzet, '#0284c7');
+                createSparkline('sparkline2', dataTransaksi, '#38bdf8');
+                createSparkline('sparkline3', dataOmzet, '#0284c7');
                 createSparkline('sparkline4', dataOmzet, '#0369a1');
             });
         </script>
