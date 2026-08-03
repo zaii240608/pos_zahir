@@ -10,7 +10,7 @@
             <!-- Header Halaman & Tombol Kembali -->
             <div class="flex items-center justify-between bg-white p-6 rounded-3xl border border-stone-200/80 shadow-sm">
                 <div>
-                    <h2 class="text-2xl font-black text-stone-900 tracking-tight">Detail Transaksi: <span class="text-teal-600">{{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}</span></h2>
+                    <h2 class="text-2xl font-black text-stone-900 tracking-tight">Detail Transaksi  {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}</h2>
                     <p class="text-xs text-stone-500 mt-1">Daftar seluruh struk transaksi yang tercatat pada tanggal ini.</p>
                 </div>
                 <a href="javascript:history.back()" class="px-4 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-700 rounded-2xl text-xs font-bold border border-stone-200/80 transition-all">

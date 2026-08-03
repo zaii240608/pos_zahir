@@ -51,7 +51,23 @@
                             <h2 class="text-2xl font-black text-stone-900 mt-0.5 tracking-tight">{{ $produk->nama }}</h2>
                         </div>
 
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Grid Info Harga, Stok, dan Jenis Produk -->
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <!-- Jenis Produk -->
+                            <div class="bg-stone-50 p-4 rounded-2xl border border-stone-200/70">
+                                <span class="text-[10px] font-extrabold uppercase tracking-widest text-stone-400">Jenis Produk</span>
+                                <div class="mt-2">
+                                    @if($produk->jenis)
+                                        <span class="inline-flex items-center px-3 py-1 rounded-xl bg-teal-50 border border-teal-200/80 text-teal-800 font-extrabold text-xs">
+                                            {{ $produk->jenis->nama_jenis }}
+                                        </span>
+                                    @else
+                                        <span class="text-xs font-bold text-stone-400 italic">Belum diset</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Harga Jual -->
                             <div class="bg-stone-50 p-4 rounded-2xl border border-stone-200/70">
                                 <span class="text-[10px] font-extrabold uppercase tracking-widest text-stone-400">Harga Jual</span>
                                 <p class="text-xl font-black text-teal-900 mt-1">
@@ -59,12 +75,13 @@
                                 </p>
                             </div>
 
+                            <!-- Stok Tersedia -->
                             <div class="bg-stone-50 p-4 rounded-2xl border border-stone-200/70">
                                 <span class="text-[10px] font-extrabold uppercase tracking-widest text-stone-400">Stok Tersedia</span>
-                                <div class="mt-1">
+                                <div class="mt-2">
                                     @if($produk->stok <= 5)
                                         <span class="px-3 py-1 text-xs font-extrabold rounded-full bg-rose-100 text-rose-900 border border-rose-200 inline-flex items-center gap-1.5">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse"></span> {{ $produk->stok }} Pcs (Habis)
+                                            <span class="w-1.5 h-1.5 rounded-full bg-rose-600 animate-pulse"></span> {{ $produk->stok }} Pcs
                                         </span>
                                     @else
                                         <span class="px-3 py-1 text-xs font-extrabold rounded-full bg-emerald-100 text-emerald-900 border border-emerald-200 inline-flex items-center gap-1.5">
@@ -75,6 +92,7 @@
                             </div>
                         </div>
 
+                        <!-- Deskripsi & Pemilik -->
                         <div class="space-y-4">
                             <div class="bg-stone-50 p-4 rounded-2xl border border-stone-200/70">
                                 <span class="text-[10px] font-extrabold uppercase tracking-widest text-stone-400">Deskripsi Produk</span>

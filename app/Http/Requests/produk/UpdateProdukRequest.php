@@ -14,10 +14,12 @@ class UpdateProdukRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'nama' => 'required|string|max:255',
+            'foto'       => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'nama'       => 'required|string|max:255',
+            'jenis_id' => 'nullable|exists:jenis,id', 
             'harga_jual' => 'required|numeric|min:0',
-            'stok' => 'required|integer|min:0',
+            'stok'       => 'required|integer|min:0',
+            'deskripsi'       => 'nullable|string',
         ];
     }
-}   
+}

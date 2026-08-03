@@ -32,16 +32,38 @@
                     @csrf
                     @method('PUT')
 
-                    <!-- Nama Produk -->
-                    <div>
-                        <label for="nama" class="block text-xs font-extrabold uppercase tracking-wider text-stone-700 mb-2">
-                            Nama Produk <span class="text-rose-500">*</span>
-                        </label>
-                        <input type="text" name="nama" id="nama" value="{{ old('nama', $produk->nama) }}" required 
-                               class="w-full rounded-2xl border-stone-200 shadow-sm focus:border-teal-600 focus:ring-teal-600 text-sm border px-4 py-3 text-stone-900 placeholder-stone-400 transition">
-                        @error('nama')
-                            <p class="text-rose-600 text-xs mt-1.5 font-medium">{{ $message }}</p>
-                        @enderror
+                    <!-- Grid Nama Produk & Jenis Produk -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <!-- Nama Produk -->
+                        <div>
+                            <label for="nama" class="block text-xs font-extrabold uppercase tracking-wider text-stone-700 mb-2">
+                                Nama Produk <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="text" name="nama" id="nama" value="{{ old('nama', $produk->nama) }}" required 
+                                   class="w-full rounded-2xl border-stone-200 shadow-sm focus:border-teal-600 focus:ring-teal-600 text-sm border px-4 py-3 text-stone-900 placeholder-stone-400 transition">
+                            @error('nama')
+                                <p class="text-rose-600 text-xs mt-1.5 font-medium">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Jenis Produk -->
+                        <div>
+                            <label for="jenis_id" class="block text-xs font-extrabold uppercase tracking-wider text-stone-700 mb-2">
+                                Jenis Produk <span class="text-rose-500">*</span>
+                            </label>
+                            <select name="jenis_id" id="jenis_id" required
+                                    class="w-full rounded-2xl border-stone-200 shadow-sm focus:border-teal-600 focus:ring-teal-600 text-sm border px-4 py-3 text-stone-900 transition">
+                                <option value="">-- Pilih Jenis Produk --</option>
+                                @foreach($jenislist as $jenis)
+                                    <option value="{{ $jenis->id }}" {{ old('jenis_id', $produk->jenis_id) == $jenis->id ? 'selected' : '' }}>
+                                        {{ $jenis->nama_jenis }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('jenis_id')
+                                <p class="text-rose-600 text-xs mt-1.5 font-medium">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
 
                     <!-- Grid Harga Jual & Stok -->

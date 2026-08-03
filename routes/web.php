@@ -8,16 +8,15 @@ use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\ItemPenjualanController;
 use App\Http\Controllers\PenjualanHistoryController;
+use App\Http\Controllers\JenisController;
 
 // ROUTE BAGI YANG BELUM LOGIN
-
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
     Route::post('/auth', [AuthController::class, 'auth'])->name('auth');
 });
 
 // ROUTE BAGI YANG SUDAH LOGIN
-
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -35,7 +34,10 @@ Route::middleware('auth')->group(function () {
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-        // Fitur History Penjualan (URUTAN HARUS BENAR: Route spesifik di atas route dinamis)
+        // Manajemen Jenis Produk (TAMBAHAN BARU)
+        Route::resource('jenis', JenisController::class);
+
+        // Fitur History Penjualan
         Route::get('/history', [PenjualanHistoryController::class, 'index'])->name('history.index');
         Route::get('/history/week', [PenjualanHistoryController::class, 'showWeek'])->name('history.week');
         Route::get('/history/date/{tanggal}', [PenjualanHistoryController::class, 'showDateDetail'])->name('history.date');
@@ -44,10 +46,9 @@ Route::middleware('auth')->group(function () {
 });
 
 // ROUTE BAGI ADMIN & KASIR
-
 Route::middleware(['auth', 'role:admin,kasir'])->group(function () {
     Route::resource('penjualan', PenjualanController::class);
     Route::post('/item-penjualan', [ItemPenjualanController::class, 'store'])->name('item-penjualan.store');
     Route::put('/detail-penjualan/{id}', [ItemPenjualanController::class, 'update'])->name('detail-penjualan.update');
     Route::delete('/item-penjualan/{id}', [ItemPenjualanController::class, 'destroy'])->name('item-penjualan.destroy');
-});
+});     

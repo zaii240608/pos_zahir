@@ -44,6 +44,22 @@
                         @enderror
                     </div>
 
+                    <div class="space-y-1.5">
+                        <label for="jenis_id" class="text-xs font-bold text-stone-700">Jenis Produk</label>
+                        <select name="jenis_id" id="jenis_id" 
+                                class="w-full px-4 py-2.5 bg-stone-50 border border-stone-200 rounded-xl text-xs font-medium text-stone-800 focus:ring-2 focus:ring-teal-500 focus:bg-white transition-all">
+                            <option value="">-- Pilih Jenis Produk --</option>
+                            @foreach($jenislist as $jenis)
+                                <option value="{{ $jenis->id }}" {{ old('jenis_id') == $jenis->id ? 'selected' : '' }}>
+                                    {{ $jenis->nama_jenis }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('jenis_id')
+                            <p class="text-[11px] text-red-500 font-semibold mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     <!-- Grid Harga Jual & Stok -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <!-- Harga Jual -->

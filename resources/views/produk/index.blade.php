@@ -52,6 +52,7 @@
                                 <th class="p-4 font-extrabold text-xs uppercase tracking-wider">#</th>
                                 <th class="p-4 font-extrabold text-xs uppercase tracking-wider">Foto</th>
                                 <th class="p-4 font-extrabold text-xs uppercase tracking-wider">Nama Produk</th>
+                                <th class="p-4 font-extrabold text-xs uppercase tracking-wider">Jenis Produk</th>
                                 <th class="p-4 font-extrabold text-xs uppercase tracking-wider">Harga Jual</th>
                                 <th class="p-4 font-extrabold text-xs uppercase tracking-wider">Stok</th>
                                 <th class="p-4 font-extrabold text-xs uppercase tracking-wider text-center">Aksi</th>
@@ -75,10 +76,22 @@
                                     <td class="p-4 text-stone-800 font-bold">
                                         {{ $produk->nama }}
                                     </td>
+                                    <td class="p-4">
+                                        @if($produk->jenis)
+                                            <span class="inline-flex items-center py-1 border-teal-200/60 text-teal-800 font-extrabold text-xs">
+                                                {{ $produk->jenis->nama_jenis }}
+                                            </span>
+                                        @elseif($produk->nama_jenis)
+                                            <span class="inline-flex items-center py-1 border-teal-200/60 text-teal-800 font-extrabold text-xs">
+                                                {{ \App\Models\Jenis::find($produk->nama_jenis)?->nama_jenis ?? '-' }}
+                                            </span>
+                                        @else
+                                            <span class="text-stone-400 italic text-xs">-</span>
+                                        @endif
+                                    </td>
                                     <td class="p-4 text-teal-900 font-black whitespace-nowrap">
                                         Rp {{ number_format($produk->harga_jual, 0, ',', '.') }}
                                     </td>
-                                    <!-- Stok dibuat tebal (font-bold) agar jelas -->
                                     <td class="p-4">
                                         @if($produk->stok <= 5)
                                             <span class="inline-flex items-center gap-1.5 text-xs font-extrabold text-rose-700">
@@ -121,7 +134,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="6" class="text-center text-stone-400 py-12 text-sm">
+                                    <td colspan="7" class="text-center text-stone-400 py-12 text-sm">
                                         <div class="flex flex-col items-center justify-center gap-2">
                                             <svg class="w-10 h-10 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
