@@ -24,10 +24,10 @@
 
         <div class="hidden md:flex items-center space-x-1.5 bg-teal-950/40 p-1.5 rounded-2xl border border-teal-700/40">
           
-          <!-- Dashboard -->
+          <!-- Beranda -->
           <a href="{{ route('dashboard') }}" 
              class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('dashboard') ? 'bg-amber-400 text-teal-950 shadow-md scale-105' : 'text-teal-100 hover:bg-teal-700/50 hover:text-white' }}">
-            <span>Dashboard</span>
+            <span>Beranda</span>
           </a>
 
           @if(auth()->check() && strtolower(auth()->user()->role->name) === 'admin')

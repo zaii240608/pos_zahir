@@ -16,7 +16,7 @@
             <!-- Header Dashboard & Tanggal Hari Ini -->
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-6 rounded-3xl border border-stone-200/80 shadow-sm">
                 <div>
-                    <h1 class="text-2xl font-extrabold text-stone-900 tracking-tight">Dashboard Overview</h1>
+                    <h1 class="text-2xl font-extrabold text-stone-900 tracking-tight">Beranda</h1>
                     <p class="text-xs text-stone-500 mt-1">Pantau performa penjualan dan status inventaris toko kamu secara real-time.</p>
                 </div>
                 

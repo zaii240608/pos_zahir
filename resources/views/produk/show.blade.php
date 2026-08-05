@@ -113,34 +113,9 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Tombol Aksi Edit & Delete -->
-                        <div class="pt-4 flex items-center gap-3 border-t border-stone-100">
-                            @can('update', $produk)
-                                <a href="{{ route('produk.edit', $produk->id) }}" 
-                                   class="bg-amber-100 hover:bg-amber-200 text-amber-900 text-xs font-extrabold px-5 py-2.5 rounded-xl border border-amber-200 transition active:scale-95 shadow-sm">
-                                    Edit Produk
-                                </a>
-                            @endcan
-                            
-                            @can('delete', $produk)
-                                <form action="{{ route('produk.destroy', $produk->id) }}" method="POST" id="delete-produk-form-{{ $produk->id }}" class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" 
-                                            onclick="confirmDelete('delete-produk-form-{{ $produk->id }}', 'Apakah Anda yakin ingin menghapus produk {{ $produk->nama }}?')" 
-                                            class="bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 border border-rose-200 text-xs font-extrabold px-5 py-2.5 rounded-xl transition active:scale-95 shadow-sm">
-                                        Hapus Produk
-                                    </button>
-                                </form>
-                            @endcan
-                        </div>
-
                     </div>
-
                 </div>
             </div>
-
         </div>
     </div>
 @endsection

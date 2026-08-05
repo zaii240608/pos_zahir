@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\users\StoreUserRequest;
 use App\Http\Requests\users\UpdateUserRequest;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\QueryException;
 
 class UserController extends Controller
 {
@@ -65,7 +66,21 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        $user->delete();
-        return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus!');
+        // 1. Cegah menghapus akun yang sedang login saat ini
+        if (auth()->id() === $user->id) {
+            return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri yang sedang aktif.');
+        }
+
+        try {
+            $user->delete();
+            return redirect()->route('admin.users.index')->with('success', 'User berhasil dihapus!');
+        } catch (QueryException $e) {
+            // 2. Kode 23000 = Integrity constraint violation (Foreign Key constraint di database)
+            if ($e->getCode() === '23000') {
+                return redirect()->back()->with('warning', "Pengguna '{$user->name}' tidak dapat dihapus karena memiliki riwayat transaksi penjualan yang tercatat dalam sistem.");
+            }
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mencoba menghapus pengguna.');
+        }
     }
 }

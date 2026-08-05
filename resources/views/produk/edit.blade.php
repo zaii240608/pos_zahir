@@ -14,16 +14,6 @@
                     <h1 class="text-2xl font-extrabold text-stone-900 tracking-tight">Edit Produk</h1>
                     <p class="text-xs text-stone-500 mt-1">Ubah informasi katalog produk {{ $produk->nama }}</p>
                 </div>
-                
-                <div>
-                    <a href="{{ route('produk.index') }}" 
-                       class="inline-flex items-center gap-2 bg-stone-100 hover:bg-stone-200 text-stone-700 font-extrabold px-5 py-2.5 rounded-2xl border border-stone-200 shadow-sm transition-all duration-200 text-sm active:scale-95">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                        </svg>
-                        <span>Kembali</span>
-                    </a>
-                </div>
             </div>
 
             <!-- Form Card -->
