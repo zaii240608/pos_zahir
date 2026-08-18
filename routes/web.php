@@ -51,4 +51,7 @@ Route::middleware(['auth', 'role:admin,kasir'])->group(function () {
     Route::post('/item-penjualan', [ItemPenjualanController::class, 'store'])->name('item-penjualan.store');
     Route::put('/detail-penjualan/{id}', [ItemPenjualanController::class, 'update'])->name('detail-penjualan.update');
     Route::delete('/item-penjualan/{id}', [ItemPenjualanController::class, 'destroy'])->name('item-penjualan.destroy');
+    Route::get('/about' , function () {
+        return view('about');
+    })->name('about');
 });     

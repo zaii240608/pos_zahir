@@ -17,7 +17,7 @@
               Sistem POS
             </span>
             <span class="text-[10px] tracking-widest text-amber-300/80 font-medium uppercase leading-tight">
-              Kasir Modern
+              Aplikasi Kasir
             </span>
           </div>
         </a>
@@ -60,6 +60,12 @@
           <a href="{{ route('penjualan.index') }}" 
              class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('penjualan.*') ? 'bg-amber-400 text-teal-950 shadow-md scale-105' : 'text-teal-100 hover:bg-teal-700/50 hover:text-white' }}">
             <span>Penjualan</span>
+          </a>
+
+          <!-- Tentang -->
+          <a href="{{ route('about') }}" 
+             class="px-4 py-2 rounded-xl text-xs font-bold transition-all duration-200 flex items-center gap-1.5 {{ request()->routeIs('about.*') ? 'bg-amber-400 text-teal-950 shadow-md scale-105' : 'text-teal-100 hover:bg-teal-700/50 hover:text-white' }}">
+            <span>Tentang</span>
           </a>
         
         </div>

@@ -142,53 +142,13 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        const whiteMaterial = new THREE.MeshStandardMaterial({ color: 0x14b8a6, roughness: 0.2, metalness: 0.1 }); 
-        const darkAccentMat = new THREE.MeshStandardMaterial({ color: 0x44403c, roughness: 0.4 }); 
-        const errorMaterial = new THREE.MeshStandardMaterial({ color: 0xf43f5e, roughness: 0.2 }); 
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
 
-        const lockGroup = new THREE.Group();
-        const shape = new THREE.Shape();
-        const width = 1.1, height = 0.9, radius = 0.25;
-
-        shape.moveTo(-width/2 + radius, -height/2);
-        shape.lineTo(width/2 - radius, -height/2);
-        shape.quadraticCurveTo(width/2, -height/2, width/2, -height/2 + radius);
-        shape.lineTo(width/2, height/2 - radius);
-        shape.quadraticCurveTo(width/2, height/2, width/2 - radius, height/2);
-        shape.lineTo(-width/2 + radius, height/2);
-        shape.quadraticCurveTo(-width/2, height/2, -width/2, height/2 - radius);
-        shape.lineTo(-width/2, -height/2 + radius);
-        shape.quadraticCurveTo(-width/2, -height/2, -width/2 + radius, -height/2);
-
-        const bodyGeo = new THREE.ExtrudeGeometry(shape, { steps: 2, depth: 0.35, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.1 });
-        bodyGeo.center();
-        const lockBody = new THREE.Mesh(bodyGeo, whiteMaterial);
-        lockBody.position.set(0, -0.3, 0);
-        lockGroup.add(lockBody);
-
-        const shackleGroup = new THREE.Group();
-        shackleGroup.position.set(-0.38, 0, 0);
-        const lockShackle = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.09, 32, 64, Math.PI), whiteMaterial);
-        lockShackle.position.set(0.38, 0.15, 0);
-        shackleGroup.add(lockShackle);
-        
-        const legGeo = new THREE.CylinderGeometry(0.09, 0.09, 0.3, 32);
-        const legLeft = new THREE.Mesh(legGeo, whiteMaterial);
-        legLeft.position.set(0, 0.02, 0);
-        const legRight = new THREE.Mesh(legGeo, whiteMaterial);
-        legRight.position.set(0.76, 0.02, 0);
-        shackleGroup.add(legLeft, legRight);
-        lockGroup.add(shackleGroup);
-
-        const keyholeCircle = new THREE.Mesh(new THREE.SphereGeometry(0.07, 32, 32), darkAccentMat);
-        keyholeCircle.position.set(0, -0.22, 0.28);
-        const keyholeSlot = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.05, 0.1, 32), darkAccentMat);
-        keyholeSlot.position.set(0, -0.28, 0.28);
-        lockGroup.add(keyholeCircle, keyholeSlot);
-
-        lockGroup.position.set(0, 2.7, 0);
-        scene.add(lockGroup);
-
+        // Sphere Hiasan Latar Belakang
         const sphereTeal = new THREE.Mesh(new THREE.SphereGeometry(0.45, 32, 32), new THREE.MeshStandardMaterial({ color: 0x14b8a6, roughness: 0.3 }));
         sphereTeal.position.set(-3.6, -1, -2);
         const sphereAmber = new THREE.Mesh(new THREE.SphereGeometry(0.35, 32, 32), new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.3 }));
@@ -200,13 +160,6 @@
         mainLight.position.set(5, 8, 5);
         scene.add(mainLight);
 
-        let mouseX = 0, mouseY = 0;
-        window.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-        });
-
-        let isErrorShaking = false, shakeTime = 0;
         let alertTimeout = null;
         const loginForm = document.getElementById('login-form');
         const submitBtn = document.getElementById('submit-btn');
@@ -233,21 +186,7 @@
 
         @if ($errors->any())
             window.addEventListener('DOMContentLoaded', () => {
-                lockBody.material = errorMaterial;
-                lockShackle.material = errorMaterial;
-                legLeft.material = errorMaterial;
-                legRight.material = errorMaterial;
-                isErrorShaking = true;
-                
                 showAlert("Email atau kata sandi yang Anda masukkan salah.");
-                
-                setTimeout(() => {
-                    isErrorShaking = false;
-                    lockBody.material = whiteMaterial;
-                    lockShackle.material = whiteMaterial;
-                    legLeft.material = whiteMaterial;
-                    legRight.material = whiteMaterial;
-                }, 1800);
             });
         @endif
 
@@ -262,16 +201,6 @@
 
             sphereTeal.position.y = -1 + Math.sin(time * 1.5) * 0.2;
             sphereAmber.position.y = 1.5 + Math.cos(time * 1.2) * 0.2;
-
-            if (isErrorShaking) {
-                shakeTime += 0.4;
-                lockGroup.rotation.y = (mouseX * 0.75) + Math.sin(shakeTime * 35) * 0.15;
-            } else {
-                lockGroup.rotation.y += (mouseX * 0.75 - lockGroup.rotation.y) * 0.04;
-                lockGroup.rotation.x += (mouseY * 0.45 - lockGroup.rotation.x) * 0.04;
-                lockGroup.position.y = 2.7 + Math.sin(time * 1.2) * 0.12;
-                lockGroup.rotation.z = Math.sin(time * 0.6) * 0.03;
-            }
 
             renderer.render(scene, camera);
         }
