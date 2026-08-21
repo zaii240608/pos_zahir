@@ -37,7 +37,7 @@ class JenisController extends Controller
 
     public function edit(Jenis $jeni)
     {
-        // Parameter otomatis $jeni karena route resource 'jenis'
+        $jeni->load('produks');
         return view('jenis.edit', ['jenis' => $jeni]);
     }
 

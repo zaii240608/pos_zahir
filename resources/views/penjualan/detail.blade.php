@@ -4,7 +4,7 @@
 @section('content')
 @include('layouts.navbar')
 
-<div class="min-h-screen bg-amber-50/40 py-8 print:bg-white print:py-0">
+<div class="min-h-screen bg-stone-100/70 py-8 print:bg-white print:py-0">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 print:p-0 print:max-w-full">
         
         <!-- Kartu Utama Detail -->
@@ -52,7 +52,7 @@
             </div>
 
             <!-- Informasi Ringkas Transaksi (Grid 4 Kolom) -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 bg-amber-50/40 p-4 rounded-2xl border border-amber-200/60 print:bg-transparent print:border-none print:p-0 print:mb-4">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 bg-stone-50/60 p-4 rounded-2xl border border-stone-200/80 print:bg-transparent print:border-none print:p-0 print:mb-4">
                 <div>
                     <p class="text-[11px] font-extrabold text-stone-400 uppercase tracking-wider print:text-stone-600">Tanggal Transaksi</p>
                     <p class="font-bold text-stone-800 text-xs mt-1">
@@ -134,7 +134,7 @@
 
             <!-- Ringkasan Total & Pembayaran -->
             <div class="flex justify-end border-t border-amber-100 pt-5 print:border-stone-300">
-                <div class="w-full sm:w-80 bg-amber-50/60 p-4 rounded-2xl border border-amber-200/60 space-y-2 print:bg-transparent print:border-none print:p-0">
+                <div class="w-full sm:w-80 bg-stone-50/80 p-4 rounded-2xl border border-stone-200/80 space-y-2 print:bg-transparent print:border-none print:p-0">
 
                     @if(isset($penjualan->bayar))
                     <div class="flex justify-between items-center text-xs">
@@ -146,7 +146,7 @@
                     @endif
 
                     @if(isset($penjualan->kembalian))
-                    <div class="flex justify-between items-center text-xs pb-2 border-b border-amber-200/60 print:border-stone-300">
+                    <div class="flex justify-between items-center text-xs pb-2 border-b border-stone-200 print:border-stone-300">
                         <span class="text-stone-500 font-medium">Kembali</span>
                         <span class="font-bold text-stone-800">
                             Rp {{ number_format($penjualan->kembalian, 0, ',', '.') }}
@@ -157,7 +157,7 @@
                     <div class="flex justify-between items-center pt-1">
                         <span class="text-xs font-bold text-stone-600 uppercase tracking-wider">Total Pembayaran: </span>
                         <span class="text-xl font-black text-teal-900 print:text-black">
-                            Rp {{ number_format($item->subtotal, 0, ',', '.') }}
+                            Rp {{ number_format($penjualan->total_harga ?? $penjualan->items->sum('subtotal'), 0, ',', '.') }}
                         </span>
                     </div>
 

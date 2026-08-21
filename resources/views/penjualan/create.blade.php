@@ -9,16 +9,14 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Header Halaman -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-0.5 text-[10px] font-black uppercase bg-teal-100 text-teal-900 rounded-full border border-teal-200">
-                            Kasir Utama
-                        </span>
-                        <h1 class="text-2xl font-extrabold text-teal-950">Transaksi Penjualan Baru</h1>
-                    </div>
-                    <p class="text-xs text-stone-500 mt-1">Pilih produk di katalog untuk ditambahkan ke keranjang belanja.</p>
+            <div class="mb-6">
+                <div class="flex items-center gap-2">
+                    <span class="px-2.5 py-0.5 text-[10px] font-black uppercase bg-teal-100 text-teal-900 rounded-full border border-teal-200">
+                        Kasir Utama
+                    </span>
+                    <h1 class="text-2xl font-extrabold text-teal-950">Transaksi Penjualan Baru</h1>
                 </div>
+                <p class="text-xs text-stone-500 mt-1">Pilih produk di katalog untuk ditambahkan ke keranjang belanja.</p>
             </div>
 
             <!-- Layout Grid 2 Bagian -->
@@ -143,7 +141,7 @@
                         </div>
 
                         <!-- Form Simpan / Checkout -->
-                        <form action="{{ route('penjualan.store') }}" method="POST" id="checkout-form" class="space-y-4">
+                        <form action="{{ route('penjualan.store') }}" method="POST" id="checkout-form" class="space-y-3">
                             @csrf
                             <input type="hidden" name="items" id="items-json">
                             <!-- Input Hidden untuk menangkap status yang dipilih -->
@@ -188,6 +186,12 @@
                                     Proses Selesai
                                 </button>
                             </div>
+
+                            <!-- TOMBOL KEMBALI DI BWAH TOMBOL SIMPAN & PROSES SELESAI -->
+                            <a href="{{ route('penjualan.index') }}" 
+                               class="w-full bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3 px-4 rounded-2xl border border-stone-200/80 transition-all duration-200 text-xs flex items-center justify-center gap-2 active:scale-95">
+                                Kembali 
+                            </a>
                         </form>
                     </div>
                 </div>
@@ -533,4 +537,4 @@
             return new Intl.NumberFormat('id-ID').format(angka);
         }
     </script>
-@endsection
+@endsection 

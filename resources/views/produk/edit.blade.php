@@ -8,7 +8,7 @@
     <div class="min-h-screen bg-stone-100/70 py-8">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             
-            <!-- Header & Tombol Kembali -->
+            <!-- Header & Tombol  -->
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 bg-white p-6 rounded-3xl border border-stone-200/80 shadow-sm">
                 <div>
                     <h1 class="text-2xl font-extrabold text-stone-900 tracking-tight">Edit Produk</h1>

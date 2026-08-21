@@ -131,10 +131,10 @@
                             <h3 class="text-base font-bold text-slate-800 mt-1">Rp {{ number_format($rataRataPerTrx, 0, ',', '.') }}</h3>
                         </div>
 
-                        <div class="bg-cyan-50/60 border border-cyan-200/80 p-3.5 rounded-lg">
-                            <p class="text-[11px] font-medium text-cyan-800">Total Bulan Tercatat</p>
+                        <div class="bg-rose-50/60 border border-rose-200/80 p-3.5 rounded-lg">
+                            <p class="text-[11px] font-medium text-rose-800">Total Bulan Tercatat</p>
                             <h3 class="text-base font-bold text-slate-800 mt-1">
-                                {{ $totalBulanTercatat }} <span class="text-[11px] font-normal text-cyan-600">Bulan</span>
+                                {{ $totalBulanTercatat }} <span class="text-[11px] font-normal text-rose-600">Bulan</span>
                             </h3>
                         </div>
                     </div>
@@ -150,12 +150,12 @@
                         <!-- Custom Legend Checkboxes -->
                         <div class="flex items-center justify-end gap-5 text-xs font-medium text-slate-600 mt-2">
                             <label class="flex items-center gap-1.5 cursor-pointer select-none">
-                                <input type="checkbox" id="toggleOmzet" checked class="rounded text-sky-500 focus:ring-sky-400 w-3.5 h-3.5">
-                                <span class="w-2 h-2 rounded-sm bg-sky-500 inline-block"></span> Total Omzet
+                                <input type="checkbox" id="toggleOmzet" checked class="rounded text-rose-500 focus:ring-rose-400 w-3.5 h-3.5">
+                                <span class="w-2 h-2 rounded-sm bg-rose-500 inline-block"></span> Total Omzet
                             </label>
                             <label class="flex items-center gap-1.5 cursor-pointer select-none">
-                                <input type="checkbox" id="toggleTrx" checked class="rounded text-cyan-400 focus:ring-cyan-300 w-3.5 h-3.5">
-                                <span class="w-2 h-2 rounded-sm bg-cyan-400 inline-block"></span> Transaksi
+                                <input type="checkbox" id="toggleTrx" checked class="rounded text-sky-500 focus:ring-sky-400 w-3.5 h-3.5">
+                                <span class="w-2 h-2 rounded-sm bg-sky-500 inline-block"></span> Transaksi
                             </label>
                         </div>
                     </div>
@@ -194,6 +194,10 @@
                                             if ($omzetLalu > 0) {
                                                 $diffPercent = (($omzetBulan - $omzetLalu) / $omzetLalu) * 100;
                                             }
+
+                                            // Menentukan parameter bulan & tahun untuk filter
+                                            $monthVal = $row->bulan_ke ?? ($row->bulan ?? null);
+                                            $yearVal = $row->tahun_ke ?? ($row->tahun ?? date('Y'));
                                         @endphp
                                         <tr class="hover:bg-slate-50/80 transition-colors">
                                             <td class="py-3 px-4 font-semibold text-slate-800">
@@ -235,9 +239,9 @@
                                                 @endif
                                             </td>
                                             <td class="py-3 px-4 text-center">
-                                                <a href="{{ route('admin.history.index', ['type' => 'monthly', 'id' => $row->bulan_ke ?? ($row->id ?? $index)]) }}" 
-                                                   class="inline-flex items-center gap-1 text-[11px] font-semibold text-sky-600 hover:text-sky-800 bg-sky-50 hover:bg-sky-100 px-2.5 py-1 rounded transition-colors">
-                                                    <span>Detail</span>
+                                                <a href="{{ route('admin.history.week', ['month' => $monthVal, 'year' => $yearVal]) }}" 
+                                                   class="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 hover:text-rose-800 bg-rose-50 hover:bg-rose-100 px-2.5 py-1 rounded transition-colors">
+                                                    <span>Detail Minggu</span>
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                                                     </svg>
@@ -283,10 +287,10 @@
                             {
                                 label: 'Total Omzet',
                                 data: @json($chartOmzet),
-                                borderColor: '#0284c7',
+                                borderColor: '#f43f5e',
                                 backgroundColor: 'transparent',
                                 borderWidth: 2,
-                                pointBackgroundColor: '#0284c7',
+                                pointBackgroundColor: '#f43f5e',
                                 pointRadius: 2.5,
                                 pointHoverRadius: 5,
                                 tension: 0,
@@ -295,10 +299,10 @@
                             {
                                 label: 'Transaksi',
                                 data: @json($chartTrx),
-                                borderColor: '#38bdf8',
+                                borderColor: '#0284c7',
                                 backgroundColor: 'transparent',
                                 borderWidth: 2,
-                                pointBackgroundColor: '#38bdf8',
+                                pointBackgroundColor: '#0284c7',
                                 pointRadius: 2.5,
                                 pointHoverRadius: 5,
                                 tension: 0,

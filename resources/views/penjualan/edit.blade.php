@@ -38,14 +38,6 @@
                 </div>
                 <p class="text-xs text-stone-500 mt-1">Perbarui item di keranjang atau selesaikan pembayaran untuk transaksi ini.</p>
             </div>
-            
-            <a href="{{ route('penjualan.index') }}" 
-               class="inline-flex items-center gap-1.5 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-bold rounded-2xl border border-stone-200 transition active:scale-95">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-                </svg>
-                <span>Kembali</span>
-            </a>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
