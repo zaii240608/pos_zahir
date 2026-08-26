@@ -120,8 +120,8 @@
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2">
-                    <span class="px-3 py-1.5 rounded-xl bg-stone-100 text-stone-700 font-extrabold text-xs border border-stone-200">PHP 8.2+</span>
-                    <span class="px-3 py-1.5 rounded-xl bg-red-50 text-red-700 font-extrabold text-xs border border-red-100">Laravel v10</span>
+                    <span class="px-3 py-1.5 rounded-xl bg-stone-100 text-stone-700 font-extrabold text-xs border border-stone-200">PHP 8.3+</span>
+                    <span class="px-3 py-1.5 rounded-xl bg-red-50 text-red-700 font-extrabold text-xs border border-red-100">Laravel v13</span>
                     <span class="px-3 py-1.5 rounded-xl bg-sky-50 text-sky-700 font-extrabold text-xs border border-sky-100">Tailwind CSS</span>
                     <span class="px-3 py-1.5 rounded-xl bg-amber-50 text-amber-800 font-extrabold text-xs border border-amber-200">MySQL</span>
                 </div>
@@ -131,7 +131,7 @@
             <div class="bg-white rounded-3xl p-6 md:p-8 border border-stone-200/80 shadow-sm flex flex-col sm:flex-row items-center gap-6">
                 <!-- Foto Developer -->
                 <div class="relative shrink-0">
-                    <img src="{{ asset('assets/images/pfp.jpg') }}" alt="Foto Developer" class="w-24 h-24 md:w-28 md:h-28 rounded-2xl object-cover border-2 border-stone-200 shadow-sm">
+                    <img src="{{ asset('assets/images/zai.jpg') }}" alt="Foto Developer" class="w-24 h-24 md:w-28 md:h-28 rounded-2xl object-cover border-2 border-stone-200 shadow-sm">
                     <span class="absolute -bottom-2 -right-2 bg-[#0f4c4a] text-white p-1.5 rounded-xl shadow-md">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>

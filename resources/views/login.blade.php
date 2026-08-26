@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - {{ config('app.name', 'Laravel POS') }}</title>
+    <title>Login - POS</title>
     
     <!-- Panggil Tailwind CSS via CDN dengan benar -->
     <script src="https://cdn.tailwindcss.com"></script>
