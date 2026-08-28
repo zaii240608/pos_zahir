@@ -1,39 +1,52 @@
 @extends('layouts.app')
 
-@section('title', 'Edit User - POS')
+@section('title', 'Edit User - POS System')
 
 @section('content')
+
     @include('layouts.navbar')
 
-    <div class="min-h-screen bg-stone-100/70 py-8">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="min-h-screen bg-slate-100/70 py-8 text-slate-800">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             
-            <!-- Header & Tombol -->
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 bg-white p-6 rounded-3xl border border-stone-200/80 shadow-sm">
-                <div>
-                    <h1 class="text-2xl font-extrabold text-stone-900 tracking-tight">Edit Data Pengguna</h1>
-                    <p class="text-xs text-stone-500 mt-1">Ubah informasi akun dan hak akses pengguna {{ $user->name }}</p>
+            <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 text-[11px] font-bold text-teal-600 uppercase tracking-wider mb-0.5">
+                            <span>Manajemen Pengguna</span>
+                            <span>•</span>
+                            <span class="text-slate-400">Edit Mode</span>
+                        </div>
+                        <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Edit Data Pengguna</h1>
+                    </div>
+                </div>
+
+                <div class="hidden sm:flex items-center gap-3 bg-slate-50 border border-slate-200/60 p-2.5 rounded-2xl">
+                    <div class="w-9 h-9 rounded-xl bg-teal-600 text-white font-black flex items-center justify-center text-sm shadow-2xs">
+                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                    </div>
+                    <div class="pr-2">
+                        <span class="text-xs font-bold text-slate-900 block truncate max-w-[120px]">{{ $user->name }}</span>
+                        <span class="text-[10px] text-slate-400 block truncate max-w-[120px]">{{ $user->email }}</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- Form Card -->
-            <div class="bg-white shadow-sm rounded-3xl border border-stone-200/80 p-6 sm:p-8">
-                <form action="{{ route('admin.users.update', $user->id) }}" method="POST">
+            <div class="bg-white shadow-xs rounded-3xl border border-slate-200/80 p-6 sm:p-8">
+                <form action="{{ route('admin.users.update', $user->id) }}" method="POST" class="space-y-6">
                     @csrf
                     @method('PUT')
 
-                    <!-- Panggil Komponen Form -->
                     @include('users._form')
 
-                    <!-- Tombol Action -->
-                    <div class="pt-6 flex items-center justify-end gap-3 border-t border-stone-100">
+                    <div class="pt-6 flex items-center justify-end gap-3 border-t border-slate-100">
                         <a href="{{ route('admin.users.index') }}" 
-                           class="px-5 py-2.5 bg-stone-100 text-stone-700 hover:bg-stone-200 text-xs font-extrabold rounded-2xl border border-stone-200 transition active:scale-95">
+                           class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-2xl border border-slate-200 transition-all duration-150 active:scale-95">
                             Batal
                         </a>
                         <button type="submit" 
-                                class="px-6 py-2.5 bg-teal-700 hover:bg-teal-800 text-white text-xs font-extrabold rounded-2xl shadow-sm hover:shadow transition active:scale-95">
-                            Perbarui Pengguna
+                                class="inline-flex items-center gap-2 px-6 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-black rounded-2xl shadow-md shadow-amber-500/20 hover:shadow-lg transition-all duration-150 active:scale-95 border border-amber-300">
+                            <span>Perbarui Pengguna</span>
                         </button>
                     </div>
                 </form>

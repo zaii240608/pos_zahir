@@ -17,11 +17,17 @@ class UserController extends Controller
         $query = User::with('role');
 
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                  ->orWhere('email', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+            
+            // Optimasi: Gabung nama & email dalam 1 query condition (jauh lebih cepat)
+            $query->whereRaw("CONCAT(name, ' ', email) LIKE ?", ["%{$search}%"]);
         }
 
-        $users = $query->paginate(10);
+        $users = $query->paginate(10)->withQueryString();
+
+        if ($request->ajax()) {
+            return view('users.partials.table', compact('users'))->render();
+        }
 
         return view('users.index', compact('users'));
     }

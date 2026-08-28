@@ -21,8 +21,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::resource('produk', ProdukController::class);
-    Route::post('/detail-penjualan', [ItemPenjualanController::class, 'store'])->name('detail-penjualan.store');
-    Route::delete('/detail-penjualan/{id}', [ItemPenjualanController::class, 'destroy'])->name('detail-penjualan.destroy');
 
     // ROUTE KHUSUS ADMIN
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
@@ -34,7 +32,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-        // Manajemen Jenis Produk (TAMBAHAN BARU)
+        // Manajemen Jenis Produk
         Route::resource('jenis', JenisController::class);
 
         // Fitur History Penjualan
@@ -48,10 +46,13 @@ Route::middleware('auth')->group(function () {
 // ROUTE BAGI ADMIN & KASIR
 Route::middleware(['auth', 'role:admin,kasir'])->group(function () {
     Route::resource('penjualan', PenjualanController::class);
-    Route::post('/item-penjualan', [ItemPenjualanController::class, 'store'])->name('item-penjualan.store');
+
+    // Item Penjualan / Detail Penjualan Route
+    Route::post('/detail-penjualan', [ItemPenjualanController::class, 'store'])->name('detail-penjualan.store');
     Route::put('/detail-penjualan/{id}', [ItemPenjualanController::class, 'update'])->name('detail-penjualan.update');
-    Route::delete('/item-penjualan/{id}', [ItemPenjualanController::class, 'destroy'])->name('item-penjualan.destroy');
-    Route::get('/about' , function () {
+    Route::delete('/detail-penjualan/{id}', [ItemPenjualanController::class, 'destroy'])->name('detail-penjualan.destroy');
+
+    Route::get('/about', function () {
         return view('about');
     })->name('about');
-});     
+});

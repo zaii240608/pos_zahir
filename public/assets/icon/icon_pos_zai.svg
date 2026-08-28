@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Background Rounded Box Dark Teal -->
+  <rect width="100" height="100" rx="28" fill="#0f4c4a"/>
+  
+  <!-- Layar Kasir / Struk (Amber Color) -->
+  <path d="M30 22h40a5 5 0 0 1 5 5v12a5 5 0 0 1-5 5H30a5 5 0 0 1-5-5V27a5 5 0 0 1 5-5zm5 7h18v3H35v-3zm0 6h28v3H35v-3z" fill="#fbbf24"/>
+  
+  <!-- Bodi Mesin Kasir & Tombol (Putih) -->
+  <path d="M22 50a4 4 0 0 1 4-4h48a4 4 0 0 1 4 4v20a10 10 0 0 1-10 10H32a10 10 0 0 1-10-10V50zm12 6v14h32V56H34zm5 3h22v2.5H39V59zm0 5h22v2.5H39V64z" fill="#ffffff"/>
+</svg>

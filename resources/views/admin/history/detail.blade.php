@@ -17,7 +17,7 @@
                     <p class="text-xs text-slate-500 mt-1 pl-4">Daftar seluruh struk transaksi yang tercatat pada tanggal ini.</p>
                 </div>
                 <a href="javascript:history.back()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold border border-slate-200/80 transition-all flex items-center gap-1.5">
-                    &larr; Kembali
+                    Kembali
                 </a>
             </div>
 

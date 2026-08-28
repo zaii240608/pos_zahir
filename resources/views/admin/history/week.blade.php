@@ -5,6 +5,12 @@
 @section('content') 
     @include('layouts.navbar')
 
+    <style>
+        /* Menghilangkan panah bawaan HTML summary agar rapi */
+        summary::-webkit-details-marker { display: none; }
+        summary { list-style: none; }
+    </style>
+
     <div class="min-h-screen bg-slate-50 py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
@@ -150,7 +156,7 @@
                         </div>
                     </div>
 
-                    <!-- Accordion Mingguan -->
+                    <!-- Accordion Mingguan (Native HTML details/summary) -->
                     <div class="pt-4 border-t border-slate-100 space-y-3">
                         <div class="flex items-center justify-between mb-2">
                             <h3 class="text-sm font-bold text-slate-800">Rincian Per Minggu</h3>
@@ -173,15 +179,15 @@
                                 $detailHarian = $item->detail_harian ?? []; 
                             @endphp
 
-                            <div x-data="{ open: {{ $index === 0 ? 'true' : 'false' }} }" 
-                                 class="border border-teal-100 rounded-xl overflow-hidden bg-white transition-all duration-200 hover:border-teal-200">
+                            <!-- HANYA MINGGU PERTAMA ($loop->first) YANG MEMILIKI ATRIBUT open -->
+                            <details {{ $loop->first ? 'open' : '' }} class="group border border-teal-100 rounded-xl overflow-hidden bg-white transition-all duration-200 hover:border-teal-200">
                                 
-                                <div @click="open = !open" 
-                                     class="p-4 bg-white hover:bg-teal-50/20 cursor-pointer flex items-center justify-between transition-colors">
+                                <!-- Summary Header (Bisa diklik secara native oleh browser) -->
+                                <summary class="p-4 bg-white hover:bg-teal-50/20 cursor-pointer flex items-center justify-between transition-colors select-none">
                                     
                                     <div class="flex items-center gap-3">
-                                        <svg class="w-4 h-4 text-teal-600 transition-transform duration-200"
-                                             :class="open ? 'rotate-180' : ''" 
+                                        <!-- Panah berputar otomatis menggunakan group-open:rotate-180 -->
+                                        <svg class="w-4 h-4 text-teal-600 transition-transform duration-200 transform group-open:rotate-180"
                                              fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                         </svg>
@@ -191,7 +197,7 @@
                                                 <h4 class="text-sm font-bold text-slate-800">
                                                     {{ $item->label_minggu ?? ('Minggu Ke-' . $item->minggu_ke) }}
                                                 </h4>
-                                                @if($index === 0)
+                                                @if($loop->first)
                                                     <span class="px-2 py-0.5 text-[9px] font-extrabold bg-amber-100 text-amber-800 rounded-md uppercase border border-amber-200/60">Terbaru</span>
                                                 @endif 
                                                 @if(isset($item->rentang_tanggal))
@@ -220,10 +226,10 @@
                                             Rp {{ number_format($omzetMinggu, 0, ',', '.') }}
                                         </span>
                                     </div>
-                                </div>
+                                </summary>
 
                                 <!-- Body Accordion (Detail Harian) -->
-                                <div x-show="open" x-collapse x-cloak class="border-t border-slate-100 bg-slate-50/50 p-4">
+                                <div class="border-t border-slate-100 bg-slate-50/50 p-4">
                                     @if(count($detailHarian) > 0)
                                         <div class="overflow-x-auto rounded-xl border border-slate-200/60 bg-white">
                                             <table class="w-full text-left text-xs border-collapse">
@@ -279,7 +285,7 @@
                                     @endif
                                 </div>
 
-                            </div>
+                            </details>
                         @endforeach
                     </div>
 
@@ -297,7 +303,7 @@
         </div>
     </div>
 
-    <!-- Script Chart.js -->
+    <!-- Script Chart.js & Checkbox Toggle -->
     @if(!empty($historyMingguan) && count($historyMingguan) > 0)
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
@@ -397,17 +403,24 @@
                     }
                 });
 
-                document.getElementById('toggleOmzet')?.addEventListener('change', function(e) {
-                    chart.setDatasetVisibility(0, e.target.checked);
-                    chart.update();
-                });
+                // Toggle visibility dataset via checkbox
+                const toggleOmzet = document.getElementById('toggleOmzet');
+                const toggleTrx = document.getElementById('toggleTrx');
 
-                document.getElementById('toggleTrx')?.addEventListener('change', function(e) {
-                    chart.setDatasetVisibility(1, e.target.checked);
-                    chart.update();
-                });
+                if (toggleOmzet) {
+                    toggleOmzet.addEventListener('change', function() {
+                        chart.setDatasetVisibility(0, this.checked);
+                        chart.update();
+                    });
+                }
+
+                if (toggleTrx) {
+                    toggleTrx.addEventListener('change', function() {
+                        chart.setDatasetVisibility(1, this.checked);
+                        chart.update();
+                    });
+                }
             });
         </script>
     @endif
-
-@endsection 
+@endsection

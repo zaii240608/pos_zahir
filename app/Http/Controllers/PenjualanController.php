@@ -74,18 +74,20 @@ class PenjualanController extends Controller
                 $totalHarga = 0;
 
                 foreach ($itemsInput as $item) {
-
                     $produk = Produk::where('id', $item['id'])->lockForUpdate()->firstOrFail();
                     
                     $qty = (int) $item['qty'];
                     if ($qty <= 0) continue;
 
-                    if ($produk->stok < $qty) {
-                        throw new \Exception("Stok produk '{$produk->nama}' tidak mencukupi (Tersisa: {$produk->stok})!");
+                    // Potong stok HANYA jika transaksi diselesaikan
+                    if ($isCompleted) {
+                        if ($produk->stok < $qty) {
+                            throw new \Exception("Stok produk '{$produk->nama}' tidak mencukupi (Tersisa: {$produk->stok})!");
+                        }
+                        $produk->decrement('stok', $qty);
                     }
-                    $produk->decrement('stok', $qty);
 
-                    $hargaSatuan = $produk->harga_jual;
+                    $hargaSatuan = $produk->harga_jual ?? $produk->harga ?? 0;
                     $subtotal = $hargaSatuan * $qty;
                     $totalHarga += $subtotal;
 
@@ -105,7 +107,7 @@ class PenjualanController extends Controller
 
             $pesan = $isCompleted 
                 ? 'Transaksi berhasil diselesaikan!' 
-                : 'Draft transaksi berhasil disimpan dan stok telah dipotong sementara.';
+                : 'Draft transaksi berhasil disimpan.';
 
             return redirect()->route('penjualan.index')->with('success', $pesan);
 
@@ -139,36 +141,69 @@ class PenjualanController extends Controller
                 ->with('error', 'Transaksi ini sudah selesai dan tidak dapat diubah.');
         }
 
-        // Jika melakukan Checkout dari draft/OPEN
-        if ($request->input('action') === 'checkout') {
-            if ($penjualan->items->isEmpty()) {
-                return back()->with('error', 'Keranjang masih kosong!');
-            }
+        $itemsInput = is_string($request->input('items')) 
+            ? json_decode($request->input('items'), true) 
+            : $request->input('items');
 
-            try {
-                DB::transaction(function () use ($request, $penjualan) {
-                    $total = $penjualan->items->sum('subtotal');
-
-                    $penjualan->update([
-                        'total_harga'       => $total,
-                        'total_pembayaran'  => $total,
-                        'metode_pembayaran' => $request->input('metode_pembayaran', 'CASH'),
-                        'status'            => 'COMPLETED',
-                    ]);
-                });
-
-                return redirect()->route('penjualan.index')->with('success', 'Transaksi berhasil diselesaikan!');
-
-            } catch (\Exception $e) {
-                return back()->with('error', $e->getMessage());
-            }
+        if (empty($itemsInput) || !is_array($itemsInput)) {
+            return back()->with('error', 'Keranjang tidak boleh kosong!');
         }
 
-        $penjualan->update([
-            'metode_pembayaran' => $request->input('metode_pembayaran', $penjualan->metode_pembayaran),
-        ]);
+        $isCheckout = ($request->input('action') === 'checkout');
 
-        return redirect()->route('penjualan.index')->with('success', 'Perubahan transaksi berhasil disimpan.');
+        try {
+            DB::transaction(function () use ($request, $penjualan, $itemsInput, $isCheckout) {
+                
+                // 1. Hapus item lama untuk diganti item terbaru
+                $penjualan->items()->delete();
+
+                $totalHarga = 0;
+
+                // 2. Simpan item-item baru
+                foreach ($itemsInput as $item) {
+                    $produk = Produk::where('id', $item['id'])->lockForUpdate()->firstOrFail();
+                    $qty = (int) $item['qty'];
+
+                    if ($qty <= 0) continue;
+
+                    // Potong stok hanya jika diselesaikan (Checkout)
+                    if ($isCheckout) {
+                        if ($produk->stok < $qty) {
+                            throw new \Exception("Stok produk '{$produk->nama}' tidak mencukupi (Tersisa: {$produk->stok})!");
+                        }
+                        $produk->decrement('stok', $qty);
+                    }
+
+                    $hargaSatuan = $produk->harga_jual ?? $produk->harga ?? 0;
+                    $subtotal = $hargaSatuan * $qty;
+                    $totalHarga += $subtotal;
+
+                    $penjualan->items()->create([
+                        'produk_id'    => $produk->id,
+                        'kuantitas'    => $qty,
+                        'harga_satuan' => $hargaSatuan,
+                        'subtotal'     => $subtotal,
+                    ]);
+                }
+
+                // 3. Update data transaksi utama
+                $penjualan->update([
+                    'total_harga'       => $totalHarga,
+                    'total_pembayaran'  => $isCheckout ? $totalHarga : 0,
+                    'metode_pembayaran' => $request->input('metode_pembayaran', 'CASH'),
+                    'status'            => $isCheckout ? 'COMPLETED' : 'OPEN',
+                ]);
+            });
+
+            $pesan = $isCheckout 
+                ? 'Transaksi berhasil diselesaikan!' 
+                : 'Perubahan draft transaksi berhasil disimpan.';
+
+            return redirect()->route('penjualan.index')->with('success', $pesan);
+
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
     }
 
     public function show($id)
@@ -184,21 +219,21 @@ class PenjualanController extends Controller
 
         $this->authorize('delete', $penjualan);
 
-        if ($penjualan->status !== 'OPEN') {
-            return redirect()->back()->with('error', 'Transaksi yang sudah selesai tidak dapat dihapus.');
-        }
-
         DB::transaction(function () use ($penjualan) {
-            foreach ($penjualan->items as $item) {
-                if ($item->produk) {
-                    $item->produk->increment('stok', $item->kuantitas);
+            // KEMBALIKAN STOK HANYA JIKA STATUS TRANSAKSI SUDAH COMPLETED
+            if ($penjualan->status === 'COMPLETED') {
+                foreach ($penjualan->items as $item) {
+                    if ($item->produk) {
+                        $item->produk->increment('stok', $item->kuantitas);
+                    }
                 }
             }
 
+            // Jika status masih OPEN, langsung hapus (karena stok DB belum pernah dipotong)
             $penjualan->items()->delete();
             $penjualan->delete();
         });
 
-        return redirect()->route('penjualan.index')->with('success', 'Transaksi berhasil dihapus dan stok telah dikembalikan.');
+        return redirect()->route('penjualan.index')->with('success', 'Transaksi berhasil dibatalkan/dihapus.');
     }
 }
