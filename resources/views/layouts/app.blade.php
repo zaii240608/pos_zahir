@@ -42,18 +42,18 @@
     <!-- Script Global SweetAlert2 -->
     <script>
         // Pop-up Notifikasi Sukses dari Controller
-        @if(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: "{{ session('success') }}",
-                showConfirmButton: false,
-                timer: 2000,
-                customClass: {
-                    popup: 'rounded-2xl'
-                }
-            });
-        @endif
+        // @if(session('success'))
+        //     Swal.fire({
+        //         icon: 'success',
+        //         title: 'Berhasil!',
+        //         text: "{{ session('success') }}",
+        //         showConfirmButton: false,
+        //         timer: 2000,
+        //         customClass: {
+        //             popup: 'rounded-2xl'
+        //         }
+        //     });
+        // @endif
 
         // Pop-up Notifikasi Error dari Controller
         @if(session('error'))

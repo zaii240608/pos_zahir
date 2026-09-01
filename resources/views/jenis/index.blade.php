@@ -100,10 +100,11 @@
                                                 <span>Edit</span>
                                             </a>
 
-                                            <form action="{{ route('admin.jenis.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus jenis ini?')" class="inline-block">
+                                            <form action="{{ route('admin.jenis.destroy', $item->id) }}" method="POST" id="delete-form-{{ $item->id }}" class="inline-block">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" 
+                                                <button type="button" 
+                                                        onclick="confirmDelete('delete-form-{{ $item->id }}', 'Yakin ingin menghapus jenis ini?')" 
                                                         class="px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-extrabold rounded-lg border border-rose-200 transition shadow-2xs active:scale-95">
                                                     <span>Hapus</span>
                                                 </button>
