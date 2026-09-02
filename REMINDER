@@ -1,0 +1,1 @@
+mysql -u root -p pos_zahir < backup_pos_zahir.sql
