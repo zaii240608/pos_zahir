@@ -6,7 +6,7 @@ cp .env.example .env
 php artisan key:generate
 buat database baru dengan nama pos_zahir
 jangan lupa sesuaikan di .env
-download database di drive terus masuk ke folder proyek pos terus lakuin hal dibawah ini
+download database di drive terus masukan ke folder proyek pos terus lakuin hal dibawah ini
 mysql -u root -p pos_zahir < backup_pos_zahir.sql
 php artisan storage:link
 php artisan serve
