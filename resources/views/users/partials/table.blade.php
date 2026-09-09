@@ -1,5 +1,5 @@
 <div class="overflow-x-auto">
-    <table class="w-full text-left text-xs text-slate-600">
+    <table class="min-w-[680px] w-full text-left text-xs text-slate-600">
         <thead class="bg-teal-900/5 border-b border-teal-900/10 text-[11px] uppercase font-black text-teal-900 tracking-wider">
             <tr>
                 <th scope="col" class="px-6 py-4 text-center w-16">#</th>

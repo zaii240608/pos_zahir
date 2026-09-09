@@ -4,11 +4,13 @@
 
 @section('content')
 
+    @include('layouts.navbar')
+
     <div class="min-h-screen bg-slate-50 py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             
             <!-- Header Halaman & Tombol Kembali -->
-            <div class="flex items-center justify-between bg-white p-6 rounded-2xl border border-teal-100 shadow-sm">
+            <div class="flex flex-col items-stretch gap-4 bg-white p-6 rounded-2xl border border-teal-100 shadow-sm sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 class="text-2xl font-black text-slate-800 tracking-tight flex items-center gap-2">
                         <span class="w-2.5 h-6 bg-teal-600 rounded-full inline-block"></span>
@@ -16,7 +18,7 @@
                     </h2>
                     <p class="text-xs text-slate-500 mt-1 pl-4">Daftar seluruh struk transaksi yang tercatat pada tanggal ini.</p>
                 </div>
-                <a href="javascript:history.back()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold border border-slate-200/80 transition-all flex items-center gap-1.5">
+                <a href="javascript:history.back()" class="self-start px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold border border-slate-200/80 transition-all flex items-center gap-1.5 sm:self-auto">
                     Kembali
                 </a>
             </div>
@@ -37,7 +39,7 @@
 
                         <!-- Tabel Item Produk -->
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left text-xs text-slate-700">
+                            <table class="min-w-[620px] w-full text-left text-xs text-slate-700">
                                 <thead class="bg-teal-50/70 text-teal-900 uppercase tracking-wider font-bold">
                                     <tr>
                                         <th class="py-2.5 px-3 rounded-l-lg">Nama Produk</th>

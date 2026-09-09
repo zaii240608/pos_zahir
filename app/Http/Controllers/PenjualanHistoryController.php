@@ -98,6 +98,37 @@ class PenjualanHistoryController extends Controller
         return view('admin.history.month', compact('historyHarian', 'rekapBulan', 'namaBulan', 'tahun', 'bulan'));
     }
 
+    public function printMonth($tahun, $bulan)
+    {
+        $transaksis = Penjualan::with('items.produk')
+            ->where('status', 'COMPLETED')
+            ->whereYear('created_at', $tahun)
+            ->whereMonth('created_at', $bulan)
+            ->latest()
+            ->get();
+
+        $namaBulan = Carbon::createFromDate($tahun, $bulan, 1)->translatedFormat('F Y');
+
+        return view('admin.history.month-report', compact('transaksis', 'namaBulan'));
+    }
+
+    public function printWeek($tahun, $minggu)
+    {
+        $tanggalMinggu = Carbon::now()->setISODate($tahun, $minggu);
+        $mulai = $tanggalMinggu->copy()->startOfWeek();
+        $selesai = $tanggalMinggu->copy()->endOfWeek();
+
+        $transaksis = Penjualan::with('items.produk')
+            ->where('status', 'COMPLETED')
+            ->whereBetween('created_at', [$mulai, $selesai])
+            ->latest()
+            ->get();
+
+        $rentangTanggal = $mulai->translatedFormat('d M Y') . ' - ' . $selesai->translatedFormat('d M Y');
+
+        return view('admin.history.week-report', compact('transaksis', 'rentangTanggal', 'tahun', 'minggu'));
+    }
+
     // Menampilkan detail seluruh transaksi pada tanggal tertentu
     public function showDateDetail($tanggal)
     {

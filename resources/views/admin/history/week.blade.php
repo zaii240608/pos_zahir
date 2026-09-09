@@ -86,7 +86,7 @@
                     @endphp
 
                     <!-- KPI Stats Header -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="bg-teal-50/50 border border-teal-100 p-4 rounded-xl">
                             <p class="text-[10px] font-extrabold text-teal-800 uppercase tracking-wider">TOTAL OMZET</p>
                             <h2 class="text-xl font-black text-teal-900 mt-0.5">Rp {{ $formatRingkas($grandTotalOmzet) }}</h2>
@@ -110,7 +110,7 @@
                     </div>
 
                     <!-- Secondary Cards Grid -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
                         <div class="bg-slate-50/80 border border-slate-100 p-3.5 rounded-xl">
                             <p class="text-[11px] font-semibold text-slate-500">Penjualan Tertinggi</p>
                             <h3 class="text-base font-bold text-teal-700 mt-1">Rp {{ $formatRingkas($penjualanTertinggi) }}</h3>
@@ -210,7 +210,7 @@
                                         </div>
                                     </div>
 
-                                    <div class="text-right flex items-center gap-4">
+                                    <div class="text-right flex items-center gap-3">
                                         @if($mingguLalu) 
                                             @if($diffPercent > 0)
                                                 <span class="hidden sm:inline-flex items-center gap-0.5 text-[11px] font-bold text-teal-700 bg-teal-50 border border-teal-100 px-2 py-0.5 rounded-md">
@@ -225,6 +225,10 @@
                                         <span class="text-sm font-black text-slate-900 block">
                                             Rp {{ number_format($omzetMinggu, 0, ',', '.') }}
                                         </span>
+                                                     <a href="{{ route('admin.history.week.print', ['tahun' => $item->tahun, 'minggu' => $item->minggu_ke]) }}" target="_blank"
+                                                         class="inline-flex items-center text-[10px] font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2 py-1 rounded-md transition-colors">
+                                            Cetak
+                                        </a>
                                     </div>
                                 </summary>
 
@@ -232,7 +236,7 @@
                                 <div class="border-t border-slate-100 bg-slate-50/50 p-4">
                                     @if(count($detailHarian) > 0)
                                         <div class="overflow-x-auto rounded-xl border border-slate-200/60 bg-white">
-                                            <table class="w-full text-left text-xs border-collapse">
+                                            <table class="min-w-[760px] w-full text-left text-xs border-collapse">
                                                 <thead>
                                                     <tr class="bg-teal-50/60 border-b border-teal-100 text-teal-900 font-bold uppercase tracking-wider">
                                                         <th class="py-2.5 px-4">TANGGAL</th>

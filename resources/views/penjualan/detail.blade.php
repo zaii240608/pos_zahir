@@ -100,7 +100,7 @@
                         </span>
                     </div>
 
-                    @if(isset($penjualan->bayar))
+                    @if(strtoupper($penjualan->metode_pembayaran ?? '') === 'CASH' && $penjualan->bayar !== null)
                     <div class="flex justify-between items-center text-xs font-bold text-stone-700 print:text-black print:text-sm pt-1">
                         <span>Bayar / Tunai</span>
                         <span class="font-black">
@@ -109,9 +109,9 @@
                     </div>
                     @endif
 
-                    @if(isset($penjualan->kembalian))
+                    @if(strtoupper($penjualan->metode_pembayaran ?? '') === 'CASH' && $penjualan->kembalian !== null)
                     <div class="flex justify-between items-center text-xs font-bold text-stone-700 print:text-black print:text-sm">
-                        <span>Kembali</span>
+                        <span>Uang Kembalian</span>
                         <span class="font-black">
                             Rp {{ number_format($penjualan->kembalian, 0, ',', '.') }}
                         </span>

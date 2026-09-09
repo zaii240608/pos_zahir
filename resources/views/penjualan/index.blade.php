@@ -70,9 +70,6 @@
 
                     <a href="{{ route('penjualan.create') }}" 
                        class="inline-flex items-center justify-center gap-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-sm hover:shadow transition-all duration-200 active:scale-95 border border-amber-300">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
-                        </svg>
                         <span>Transaksi Baru</span>
                     </a>
                 </div>
@@ -82,7 +79,7 @@
             <!-- Tabel Daftar Penjualan -->
             <div class="bg-white shadow-xs rounded-3xl border border-slate-200/80 overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
+                    <table class="min-w-[820px] w-full text-left border-collapse text-xs">
                         <thead>
                             <tr class="bg-slate-50/80 border-b border-slate-200/80 text-slate-700">
                                 <th class="p-4 font-black uppercase tracking-wider">#</th>

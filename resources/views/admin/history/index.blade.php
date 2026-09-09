@@ -89,7 +89,7 @@
                     @endphp
 
                     <!-- Row 1: Header KPI Stats -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div class="bg-teal-50/50 border border-teal-100 p-4 rounded-xl">
                             <p class="text-[10px] font-extrabold text-teal-800 uppercase tracking-wider">TOTAL OMZET</p>
                             <h2 class="text-xl font-black text-teal-900 mt-0.5">Rp {{ $formatRingkas($grandTotalOmzet) }}</h2>
@@ -113,7 +113,7 @@
                     </div>
 
                     <!-- Row 2: Secondary Cards Grid -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
                         <div class="bg-slate-50/80 border border-slate-100 p-3.5 rounded-xl">
                             <p class="text-[11px] font-semibold text-slate-500">Penjualan Tertinggi</p>
                             <h3 class="text-base font-bold text-teal-700 mt-1">Rp {{ $formatRingkas($penjualanTertinggi) }}</h3>
@@ -164,11 +164,11 @@
                     <div class="pt-4 border-t border-slate-100">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-sm font-bold text-slate-800">Rincian Per Bulan</h3>
-                            <span class="text-xs text-slate-400">Diurutkan dari bulan terbaru</span>
+                            <span class="text-xs text-slate-400 hidden sm:inline">Diurutkan dari bulan terbaru</span>
                         </div>
 
                         <div class="overflow-x-auto rounded-xl border border-slate-200/80">
-                            <table class="w-full text-left text-xs border-collapse">
+                            <table class="min-w-[760px] w-full text-left text-xs border-collapse">
                                 <thead>
                                     <tr class="bg-teal-50/60 border-b border-teal-100 text-teal-900 font-bold uppercase tracking-wider">
                                         <th class="py-3 px-4">Periode Bulan</th>
@@ -239,13 +239,16 @@
                                                 @endif
                                             </td>
                                             <td class="py-3 px-4 text-center">
-                                                <a href="{{ route('admin.history.week', ['month' => $monthVal, 'year' => $yearVal]) }}" 
-                                                   class="inline-flex items-center gap-1 text-[11px] font-bold text-teal-700 hover:text-teal-900 bg-teal-50 hover:bg-teal-100 border border-teal-200/60 px-2.5 py-1 rounded-lg transition-colors">
-                                                    <span>Detail Minggu</span>
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                                    </svg>
-                                                </a>
+                                                <div class="inline-flex items-center gap-1">
+                                                    <a href="{{ route('admin.history.month', ['tahun' => $yearVal, 'bulan' => $monthVal]) }}"
+                                                       class="text-[11px] font-bold text-teal-700 hover:text-teal-900 bg-teal-50 hover:bg-teal-100 border border-teal-200/60 px-2.5 py-1 rounded-lg transition-colors">
+                                                        Detail
+                                                    </a>
+                                                    <a href="{{ route('admin.history.month.print', ['tahun' => $yearVal, 'bulan' => $monthVal]) }}" target="_blank"
+                                                       class="text-[11px] font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 px-2.5 py-1 rounded-lg transition-colors">
+                                                        Cetak
+                                                    </a>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforeach

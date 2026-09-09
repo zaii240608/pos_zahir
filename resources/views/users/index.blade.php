@@ -52,9 +52,6 @@
                     <!-- Tombol Tambah User -->
                     <a href="{{ route('admin.users.create') }}" 
                        class="inline-flex items-center justify-center gap-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-sm hover:shadow transition-all duration-200 active:scale-95 border border-amber-300">
-                        <svg class="w-4 h-4 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
-                        </svg>
                         <span>Tambah Pengguna</span>
                     </a>
                 </div>

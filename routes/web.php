@@ -10,6 +10,11 @@ use App\Http\Controllers\ItemPenjualanController;
 use App\Http\Controllers\PenjualanHistoryController;
 use App\Http\Controllers\JenisController;
 
+// ROUTE LANDING PAGE
+Route::get('/', function () {
+    return view('landing');
+});
+
 // ROUTE BAGI YANG BELUM LOGIN
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'index'])->name('login');
@@ -38,8 +43,10 @@ Route::middleware('auth')->group(function () {
         // Fitur History Penjualan
         Route::get('/history', [PenjualanHistoryController::class, 'index'])->name('history.index');
         Route::get('/history/week', [PenjualanHistoryController::class, 'showWeek'])->name('history.week');
+        Route::get('/history/week/{tahun}/{minggu}/print', [PenjualanHistoryController::class, 'printWeek'])->name('history.week.print');
         Route::get('/history/date/{tanggal}', [PenjualanHistoryController::class, 'showDateDetail'])->name('history.date');
         Route::get('/history/{tahun}/{bulan}', [PenjualanHistoryController::class, 'showMonth'])->name('history.month');
+        Route::get('/history/{tahun}/{bulan}/print', [PenjualanHistoryController::class, 'printMonth'])->name('history.month.print');
     });
 });
 

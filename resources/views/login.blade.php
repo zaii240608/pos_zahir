@@ -3,112 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - POS</title>
+    <title>Login - SISTEM POS</title>
     
-    <!-- Panggil Tailwind CSS via CDN dengan benar -->
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- GSAP Animation CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f3832',
+                            card: '#13433c',
+                            accent: '#f59e0b',
+                            accentHover: '#d97706',
+                            bgDark: '#081e1b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-stone-900 min-h-screen font-sans antialiased flex flex-col items-center justify-center p-4 overflow-hidden relative selection:bg-teal-500 selection:text-white">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col items-center justify-center p-4 overflow-x-hidden overflow-y-auto relative selection:bg-brand-accent selection:text-brand-dark">
 
-    <!-- Glowing Background Orbs dengan Animasi Napas (Pulse) -->
-    <div class="fixed top-1/4 -left-20 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl pointer-events-none animate-pulse duration-1000"></div>
-    <div class="fixed bottom-1/4 -right-20 w-96 h-96 bg-amber-500/15 rounded-full blur-3xl pointer-events-none animate-pulse duration-700"></div>
+    <!-- Ambient Glowing Background Orbs -->
+    <div class="fixed top-0 -left-20 w-72 h-72 border-[32px] border-teal-100 rounded-full pointer-events-none"></div>
+    <div class="fixed bottom-0 -right-20 w-80 h-80 border-[40px] border-amber-100 rounded-full pointer-events-none"></div>
 
-    <!-- Canvas Render Animasi 3D -->
-    <canvas id="bg-3d" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"></canvas>
+    <!-- Canvas Render Animasi 3D Three.js -->
+    <canvas id="bg-3d" class="hidden"></canvas>
 
     <!-- Pop-up Notifikasi Error -->
     <div id="alert-popup" class="fixed top-6 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 pointer-events-none w-full max-w-md px-4">
         <div class="bg-rose-950/90 border border-rose-800/80 backdrop-blur-xl p-4 rounded-2xl shadow-2xl shadow-rose-950/50 flex items-start space-x-3">
-            <div class="text-rose-400 mt-0.5 animate-bounce">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                </svg>
+            <div class="text-rose-400 mt-0.5">
+                <i data-lucide="alert-triangle" class="w-5 h-5 animate-bounce"></i>
             </div>
             <div class="flex-1">
                 <h3 class="text-xs font-extrabold text-rose-200 uppercase tracking-wider">Akses Gagal</h3>
                 <p id="alert-message" class="text-xs font-medium text-rose-300 mt-0.5">Email belum terdaftar atau password salah.</p>
             </div>
             <button onclick="closeAlert()" class="text-rose-400 hover:text-rose-200 transition-colors pointer-events-auto">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
+                <i data-lucide="x" class="w-4 h-4"></i>
             </button>
         </div>
     </div>
 
-    <!-- Wrapper Card Utama dengan Efek Transisi Masuk -->
-    <div class="w-full max-w-md flex flex-col items-center z-10 space-y-6 transition-all duration-700 transform translate-y-0 opacity-100">
+    <!-- Wrapper Card Utama dengan Animasi GSAP -->
+    <div class="gsap-card w-full max-w-md flex flex-col items-center z-10 space-y-6">
         
-        <div class="w-full bg-stone-800/80 backdrop-blur-2xl rounded-3xl shadow-2xl shadow-stone-950/80 border border-stone-700/60 overflow-hidden relative transition-transform duration-300 hover:border-teal-500/40">
+        <div class="w-full bg-white rounded-2xl shadow-xl shadow-slate-200/70 border border-slate-200/80 overflow-hidden relative transition-all duration-300 hover:shadow-2xl">
             
-            <!-- Glow Border Accent Top dengan Animasi Shimmer -->
-            <div class="h-1 w-full bg-gradient-to-r from-teal-500 via-emerald-300 to-teal-600 animate-pulse"></div>
+            <!-- Shimmer Border Line -->
+            <div class="h-1.5 w-full bg-teal-400"></div>
 
             <!-- Header Card -->
-            <div class="p-8 pb-2 text-center flex flex-col items-center">
-                <!-- App Logo dengan Efek Hover Berputar Lembut -->
-                <div class="w-12 h-12 rounded-2xl bg-teal-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400 shadow-lg shadow-teal-500/10 mb-4 transition-transform duration-500 hover:rotate-12">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                    </svg>
+            <div class="p-8 pb-3 text-center flex flex-col items-center">
+                <!-- Logo Box -->
+                <div class="gsap-logo w-14 h-14 rounded-2xl bg-brand-accent text-brand-dark flex items-center justify-center shadow-lg shadow-amber-500/20 mb-4 transform transition-transform duration-500 hover:rotate-12">
+                    <i data-lucide="shopping-cart" class="w-7 h-7"></i>
                 </div>
 
-                <h2 class="text-2xl font-black text-white tracking-tight">
-                    Selamat <span class="text-teal-400">Datang</span>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">
+                    Selamat <span class="text-teal-600">Datang</span>
                 </h2>
-                <p class="text-xs font-medium text-stone-400 mt-1.5">
-                    Masukkan kredensial akun Anda untuk mengakses APP POS.
+                <p class="text-xs font-medium text-slate-500 mt-1.5">
+                    Masukkan kredensial akun Anda untuk mengakses SISTEM POS.
                 </p>
             </div>
 
             <!-- Form Section -->
-            <div class="px-8 pb-8 pt-4">
+            <div class="px-8 pb-8 pt-2">
                 <form id="login-form" action="{{ route('auth') }}" method="POST" class="space-y-4">
                     @csrf
 
                     <!-- Email Field -->
-                    <div class="space-y-1.5">
-                        <label for="email" class="block text-xs font-bold text-stone-300">Alamat Email</label>
+                    <div class="gsap-field space-y-1.5">
+                        <label for="email" class="block text-xs font-bold text-slate-700">Alamat Email</label>
                         <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-500 transition-colors group-focus-within:text-teal-400">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
-                                </svg>
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 transition-colors group-focus-within:text-teal-600">
+                                <i data-lucide="mail" class="w-4 h-4"></i>
                             </div>
                             <input id="email" name="email" type="email" required 
-                                class="block w-full pl-10 pr-4 py-2.5 bg-stone-900/70 border border-stone-700/80 rounded-2xl text-stone-100 placeholder-stone-500 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-xs font-medium transition-all duration-300"
+                                class="block w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-teal-600 focus:ring-4 focus:ring-teal-600/10 text-xs font-medium transition-all duration-300"
                                 placeholder="nama@email.com" value="{{ old('email') }}">
                         </div>
                     </div>
 
                     <!-- Password Field -->
-                    <div class="space-y-1.5">
+                    <div class="gsap-field space-y-1.5">
                         <div class="flex justify-between items-center">
-                            <label for="password" class="block text-xs font-bold text-stone-300">Kata Sandi</label>
+                            <label for="password" class="block text-xs font-bold text-slate-700">Kata Sandi</label>
                             @if (Route::has('password.request'))
-                                <a href="{{ route('password.request') }}" class="text-[11px] font-semibold text-teal-400 hover:text-teal-300 transition-colors">Lupa Password?</a>
+                                <a href="{{ route('password.request') }}" class="text-[11px] font-semibold text-teal-700 hover:text-amber-600 transition-colors">Lupa Password?</a>
                             @endif
                         </div>
                         <div class="relative group">
-                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-stone-500 transition-colors group-focus-within:text-teal-400">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                                </svg>
+                            <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 transition-colors group-focus-within:text-teal-600">
+                                <i data-lucide="lock" class="w-4 h-4"></i>
                             </div>
                             <input id="password" name="password" type="password" required 
-                                class="block w-full pl-10 pr-4 py-2.5 bg-stone-900/70 border border-stone-700/80 rounded-2xl text-stone-100 placeholder-stone-500 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 text-xs font-medium transition-all duration-300"
+                                class="block w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-teal-600 focus:ring-4 focus:ring-teal-600/10 text-xs font-medium transition-all duration-300"
                                 placeholder="••••••••">
                         </div>
                     </div>
 
-                    <div class="pt-3">
+                    <!-- Submit Button -->
+                    <div class="gsap-submit pt-3">
                         <button type="submit" id="submit-btn"
-                            class="w-full py-3 px-4 bg-teal-500 hover:bg-teal-600 text-stone-950 font-extrabold rounded-2xl shadow-lg shadow-teal-500/20 hover:shadow-teal-500/30 transition duration-200 active:scale-95 text-xs tracking-wide flex items-center justify-center space-x-2">
+                            class="w-full py-3.5 px-4 bg-brand-dark hover:bg-brand-card text-white font-extrabold rounded-xl shadow-lg shadow-teal-900/20 hover:shadow-xl transition duration-200 active:scale-95 text-xs tracking-wider flex items-center justify-center space-x-2">
                             <span id="btn-text">Masuk Sekarang</span>
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                            </svg>
+                            <i data-lucide="arrow-right" class="w-4 h-4"></i>
                         </button>
                     </div>
                 </form>
@@ -116,12 +137,12 @@
         </div>
 
         <!-- Footer Copyright -->
-        <p class="text-[11px] font-medium text-stone-500 tracking-wide hover:text-stone-400 transition-colors">
-            &copy; {{ date('Y') }} zLDevv. All rights reserved.
+            <p class="text-[11px] font-semibold text-slate-400 tracking-wider hover:text-slate-600 transition-colors">
+            &copy; {{ date('Y') }} SISTEM POS. All rights reserved.
         </p>
     </div>
 
-    <!-- Script Three.js Menggunakan CDN ES Module -->
+    <!-- Script Importmap Three.js -->
     <script type="importmap">
         {
             "imports": {
@@ -133,6 +154,10 @@
     <script type="module">
         import * as THREE from 'three';
 
+        // Init Lucide Icons
+        lucide.createIcons();
+
+        // Three.js 3D Background Setup
         const canvas = document.getElementById('bg-3d');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -148,18 +173,27 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // Sphere Hiasan Latar Belakang
-        const sphereTeal = new THREE.Mesh(new THREE.SphereGeometry(0.45, 32, 32), new THREE.MeshStandardMaterial({ color: 0x14b8a6, roughness: 0.3 }));
-        sphereTeal.position.set(-3.6, -1, -2);
-        const sphereAmber = new THREE.Mesh(new THREE.SphereGeometry(0.35, 32, 32), new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.3 }));
-        sphereAmber.position.set(3.6, 1.5, -2);
-        scene.add(sphereTeal, sphereAmber);
+        // 3D Geometries
+        const geometryTorus = new THREE.TorusKnotGeometry(0.5, 0.15, 100, 16);
+        const materialAmber = new THREE.MeshStandardMaterial({ color: 0xf59e0b, roughness: 0.2, metalness: 0.5 });
+        const torusNode = new THREE.Mesh(geometryTorus, materialAmber);
+        torusNode.position.set(-3.2, -1.2, -1);
 
-        scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-        const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
-        mainLight.position.set(5, 8, 5);
-        scene.add(mainLight);
+        const sphereTeal = new THREE.Mesh(
+            new THREE.SphereGeometry(0.5, 32, 32),
+            new THREE.MeshStandardMaterial({ color: 0x10b981, roughness: 0.3 })
+        );
+        sphereTeal.position.set(3.4, 1.4, -1.5);
 
+        scene.add(torusNode, sphereTeal);
+
+        // Lighting
+        scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.8);
+        dirLight.position.set(5, 8, 5);
+        scene.add(dirLight);
+
+        // Alert popup handling
         let alertTimeout = null;
         const loginForm = document.getElementById('login-form');
         const submitBtn = document.getElementById('submit-btn');
@@ -172,9 +206,7 @@
             popup.classList.add('translate-y-0', 'opacity-100');
 
             if (alertTimeout) clearTimeout(alertTimeout);
-            alertTimeout = setTimeout(() => {
-                closeAlert();
-            }, 3000);
+            alertTimeout = setTimeout(() => { closeAlert(); }, 3500);
         }
 
         window.closeAlert = function() {
@@ -190,21 +222,55 @@
             });
         @endif
 
-        loginForm.addEventListener('submit', function(e) {
+        loginForm.addEventListener('submit', function() {
             btnText.innerText = "Memeriksa Akun...";
             submitBtn.disabled = true;
         });
 
+        // Loop Animation Three.js
         function animate() {
             requestAnimationFrame(animate);
             const time = Date.now() * 0.001;
 
-            sphereTeal.position.y = -1 + Math.sin(time * 1.5) * 0.2;
-            sphereAmber.position.y = 1.5 + Math.cos(time * 1.2) * 0.2;
+            torusNode.rotation.x = time * 0.5;
+            torusNode.rotation.y = time * 0.3;
+            torusNode.position.y = -1.2 + Math.sin(time * 1.5) * 0.2;
+
+            sphereTeal.position.y = 1.4 + Math.cos(time * 1.2) * 0.25;
 
             renderer.render(scene, camera);
         }
         animate();
+
+        // GSAP Animations
+        document.addEventListener("DOMContentLoaded", () => {
+            const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+            timeline.from(".gsap-card", {
+                y: 40,
+                opacity: 0,
+                duration: 0.9
+            })
+            .from(".gsap-field", {
+                y: 16,
+                opacity: 0,
+                duration: 0.45,
+                stagger: 0.12
+            }, "-=0.35")
+            .from(".gsap-submit", {
+                y: 12,
+                opacity: 0,
+                duration: 0.4
+            }, "-=0.2");
+
+            gsap.from(".gsap-logo", {
+                scale: 0,
+                rotation: -45,
+                duration: 0.7,
+                delay: 0.2,
+                ease: "back.out(1.7)"
+            });
+        });
     </script>
 </body>
 </html>

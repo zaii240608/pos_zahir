@@ -106,7 +106,7 @@
                 </div>
 
                 <!-- KANAN: Keranjang Belanja -->
-                <div class="bg-white rounded-3xl p-6 border border-amber-200/60 shadow-lg flex flex-col sticky top-6 max-h-[calc(100vh-48px)] transition-all duration-300 hover:shadow-xl">
+                <div class="bg-white rounded-3xl p-6 border border-amber-200/60 shadow-lg flex flex-col xl:sticky xl:top-6 max-h-none xl:max-h-[calc(100vh-48px)] transition-all duration-300 hover:shadow-xl">
                     
                     <div class="flex items-center justify-between pb-4 border-b border-amber-100 mb-4 gap-2">
                         <div class="flex items-center gap-2.5">
@@ -151,6 +151,25 @@
                                     <option value="QRIS" {{ $penjualan->metode_pembayaran == 'QRIS' ? 'selected' : '' }}>QRIS</option>
                                     <option value="TRANSFER" {{ $penjualan->metode_pembayaran == 'TRANSFER' ? 'selected' : '' }}>Transfer Bank</option>
                                 </select>
+                            </div>
+
+                            <div id="cash-payment-section" class="space-y-3 rounded-2xl border border-amber-200/70 bg-amber-50/50 p-3">
+                                <div>
+                                    <label for="uang-dibayar" class="block text-[10px] font-black uppercase tracking-wider text-stone-500 mb-1">
+                                        Uang Dibayar
+                                    </label>
+                                    <div class="relative">
+                                        <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-xs font-bold text-stone-400">Rp</span>
+                                        <input type="number" name="uang_dibayar" id="uang-dibayar" min="0" step="100" inputmode="numeric"
+                                               value="{{ old('uang_dibayar', $penjualan->bayar) }}" placeholder="0"
+                                               class="w-full rounded-xl border border-stone-200 bg-white py-2.5 pl-9 pr-3 text-sm font-black text-stone-800 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20">
+                                    </div>
+                                    <p id="cash-payment-error" class="mt-1 hidden text-[10px] font-bold text-rose-600">Uang dibayar masih kurang dari total transaksi.</p>
+                                </div>
+                                <div class="flex items-center justify-between border-t border-amber-200/70 pt-3">
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-stone-500">Uang Kembalian</span>
+                                    <span id="uang-kembalian-text" class="text-lg font-black text-teal-700">Rp 0</span>
+                                </div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-3">
@@ -202,8 +221,45 @@
 
         document.addEventListener('DOMContentLoaded', function () {
             initLiveSearch();
+            initCashPayment();
             updateDOM();
         });
+
+        function initCashPayment() {
+            const selectMetode = document.getElementById('metode-pembayaran');
+            const cashInput = document.getElementById('uang-dibayar');
+
+            selectMetode.addEventListener('change', toggleCashPayment);
+            cashInput.addEventListener('input', updateCashChange);
+            toggleCashPayment();
+        }
+
+        function toggleCashPayment() {
+            const selectMetode = document.getElementById('metode-pembayaran');
+            const cashSection = document.getElementById('cash-payment-section');
+            const cashInput = document.getElementById('uang-dibayar');
+            const isCash = selectMetode.value.toUpperCase() === 'CASH';
+
+            cashSection.classList.toggle('hidden', !isCash);
+            cashInput.required = false;
+            cashInput.setCustomValidity('');
+            document.getElementById('cash-payment-error').classList.add('hidden');
+
+            updateCashChange();
+        }
+
+        function updateCashChange() {
+            const cashInput = document.getElementById('uang-dibayar');
+            const changeText = document.getElementById('uang-kembalian-text');
+            const totalText = document.getElementById('total-pembayaran-text').textContent.replace(/[^0-9]/g, '');
+            const total = parseInt(totalText, 10) || 0;
+            const paid = parseInt(cashInput.value, 10) || 0;
+            const change = Math.max(paid - total, 0);
+
+            changeText.textContent = `Rp ${formatRupiah(change)}`;
+            changeText.classList.toggle('text-rose-600', paid < total && paid > 0);
+            changeText.classList.toggle('text-teal-700', paid >= total || paid === 0);
+        }
 
         function initLiveSearch() {
             const searchInput = document.getElementById('search-input');
@@ -283,10 +339,27 @@
         }
 
         function hapusItem(produkId) {
-            if (confirm('Hapus produk dari keranjang?')) {
-                keranjang = keranjang.filter(item => Number(item.id) !== Number(produkId));
-                updateDOM();
-            }
+            Swal.fire({
+                title: 'Hapus produk?',
+                text: 'Produk ini akan dihapus dari keranjang.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc2626',
+                cancelButtonColor: '#4b5563',
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'px-4 py-2 rounded-lg text-sm font-semibold',
+                    cancelButton: 'px-4 py-2 rounded-lg text-sm font-semibold mr-2'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    keranjang = keranjang.filter(item => Number(item.id) !== Number(produkId));
+                    updateDOM();
+                }
+            });
         }
 
         function updateDOM() {
@@ -355,10 +428,31 @@
                 id: item.id,
                 qty: item.qty
             })));
+            updateCashChange();
         }
 
         function submitForm(actionType) {
             if (keranjang.length === 0) return;
+
+            const isCheckout = actionType === 'checkout';
+            const isCash = document.getElementById('metode-pembayaran').value.toUpperCase() === 'CASH';
+            const cashInput = document.getElementById('uang-dibayar');
+            const total = keranjang.reduce((sum, item) => sum + item.subtotal, 0);
+            const cashError = document.getElementById('cash-payment-error');
+
+            if (isCheckout && isCash) {
+                const paid = parseInt(cashInput.value, 10) || 0;
+                if (paid < total) {
+                    cashInput.setCustomValidity('Uang dibayar harus sama atau lebih besar dari total transaksi.');
+                    cashError.classList.remove('hidden');
+                    cashInput.reportValidity();
+                    cashInput.focus();
+                    return;
+                }
+            }
+
+            cashInput.setCustomValidity('');
+            cashError.classList.add('hidden');
             document.getElementById('form-action').value = actionType;
             document.getElementById('checkout-form').submit();
         }

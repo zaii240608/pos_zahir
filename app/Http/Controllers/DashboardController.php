@@ -26,13 +26,11 @@ class DashboardController extends Controller
         $produkTerlaris = $this->laporanPenjualanService->produkTerlarisHariIni();
         $ringkasan = $this->laporanPenjualanService->ringkasanHariIni();
         $produkStokRendah = $this->monitoringStokService->produkStokRendah();
-        $produkStokHabis = $this->monitoringStokService->produkStokHabis();
 
         return view('dashboard', compact(
             'tanggalHariIni', 
             'ringkasan', 
             'produkStokRendah', 
-            'produkStokHabis', 
             'produkTerlaris'
         ));
     }

@@ -103,7 +103,7 @@
                 </div>
 
                 <!-- KANAN: Keranjang Belanja (Sticky) -->
-                <div class="bg-white rounded-3xl p-6 border border-amber-200/60 shadow-lg flex flex-col sticky top-6 max-h-[calc(100vh-48px)] transition-all duration-300 hover:shadow-xl">
+                <div class="bg-white rounded-3xl p-6 border border-amber-200/60 shadow-lg flex flex-col xl:sticky xl:top-6 max-h-none xl:max-h-[calc(100vh-48px)] transition-all duration-300 hover:shadow-xl">
                     
                     <!-- Header Keranjang -->
                     <div class="flex items-center justify-between pb-4 border-b border-amber-100 mb-4 gap-2">
@@ -158,6 +158,25 @@
                                     <option value="QRIS">QRIS</option>
                                     <option value="Transfer">Transfer Bank</option>
                                 </select>
+                            </div>
+
+                            <!-- Nominal Tunai & Uang Kembalian -->
+                            <div id="cash-payment-section" class="space-y-3 rounded-2xl border border-amber-200/70 bg-amber-50/50 p-3">
+                                <div>
+                                    <label for="uang-dibayar" class="block text-[10px] font-black uppercase tracking-wider text-stone-500 mb-1">
+                                        Uang Dibayar
+                                    </label>
+                                    <div class="relative">
+                                        <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-xs font-bold text-stone-400">Rp</span>
+                                        <input type="number" name="uang_dibayar" id="uang-dibayar" min="0" step="100" inputmode="numeric" placeholder="0"
+                                               class="w-full rounded-xl border border-stone-200 bg-white py-2.5 pl-9 pr-3 text-sm font-black text-stone-800 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20">
+                                    </div>
+                                    <p id="cash-payment-error" class="mt-1 hidden text-[10px] font-bold text-rose-600">Uang dibayar masih kurang dari total transaksi.</p>
+                                </div>
+                                <div class="flex items-center justify-between border-t border-amber-200/70 pt-3">
+                                    <span class="text-[10px] font-black uppercase tracking-wider text-stone-500">Uang Kembalian</span>
+                                    <span id="uang-kembalian-text" class="text-lg font-black text-teal-700">Rp 0</span>
+                                </div>
                             </div>
 
                             <!-- DUA TOMBOL AKSI: Simpan (Open) vs Proses Selesai -->
@@ -232,8 +251,53 @@
         document.addEventListener('DOMContentLoaded', function () {
             initLiveSearch();
             initInputValidation();
+            initCashPayment();
             updateDOM();
         });
+
+        function initCashPayment() {
+            const selectMetode = document.getElementById('metode-pembayaran');
+            const cashInput = document.getElementById('uang-dibayar');
+
+            selectMetode.addEventListener('change', toggleCashPayment);
+            cashInput.addEventListener('input', updateCashChange);
+            toggleCashPayment();
+        }
+
+        function toggleCashPayment() {
+            const selectMetode = document.getElementById('metode-pembayaran');
+            const cashSection = document.getElementById('cash-payment-section');
+            const cashInput = document.getElementById('uang-dibayar');
+            const isCash = selectMetode.value === 'Cash';
+
+            cashSection.classList.toggle('hidden', !isCash);
+            cashInput.required = isCash;
+
+            if (!isCash) {
+                cashInput.setCustomValidity('');
+                document.getElementById('cash-payment-error').classList.add('hidden');
+            }
+
+            updateCashChange();
+        }
+
+        function updateCashChange() {
+            const cashInput = document.getElementById('uang-dibayar');
+            const changeText = document.getElementById('uang-kembalian-text');
+            const totalText = document.getElementById('total-pembayaran-text').textContent.replace(/[^0-9]/g, '');
+            const total = parseInt(totalText, 10) || 0;
+            const paid = parseInt(cashInput.value, 10) || 0;
+            const change = Math.max(paid - total, 0);
+            const cashError = document.getElementById('cash-payment-error');
+
+            changeText.textContent = `Rp ${formatRupiah(change)}`;
+            changeText.classList.toggle('text-rose-600', paid < total && paid > 0);
+            changeText.classList.toggle('text-teal-700', paid >= total || paid === 0);
+            if (paid >= total) {
+                cashInput.setCustomValidity('');
+                cashError.classList.add('hidden');
+            }
+        }
 
         function initLiveSearch() {
             const searchInput = document.getElementById('search-input');
@@ -505,6 +569,7 @@
 
             const grandTotal = keranjang.reduce((sum, item) => sum + item.subtotal, 0);
             totalText.textContent = `Rp ${formatRupiah(grandTotal)}`;
+            updateCashChange();
 
             const dataToSubmit = keranjang.map(item => ({
                 id: item.id,
@@ -518,6 +583,7 @@
 
             const form = document.getElementById('checkout-form');
             document.getElementById('status-penjualan').value = status;
+            const grandTotal = keranjang.reduce((sum, item) => sum + item.subtotal, 0);
             
             const selectMetode = document.getElementById('metode-pembayaran');
             if (status === 'open') {
@@ -527,6 +593,22 @@
                 if (!selectMetode.value) {
                     selectMetode.reportValidity();
                     return;
+                }
+
+                if (selectMetode.value === 'Cash') {
+                    const cashInput = document.getElementById('uang-dibayar');
+                    const cashPaid = parseInt(cashInput.value, 10) || 0;
+
+                    if (cashPaid < grandTotal) {
+                        cashInput.setCustomValidity('Uang dibayar harus sama atau lebih besar dari total transaksi.');
+                        cashInput.reportValidity();
+                        document.getElementById('cash-payment-error').classList.remove('hidden');
+                        cashInput.focus();
+                        return;
+                    }
+
+                    cashInput.setCustomValidity('');
+                    document.getElementById('cash-payment-error').classList.add('hidden');
                 }
             }
 

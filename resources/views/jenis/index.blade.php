@@ -53,9 +53,6 @@
                 <div>
                     <a href="{{ route('admin.jenis.create') }}" 
                        class="inline-flex items-center justify-center gap-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-sm hover:shadow transition-all duration-200 active:scale-95 border border-amber-300">
-                        <svg class="w-4 h-4 text-slate-950 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
-                        </svg>
                         <span>Tambah Jenis</span>
                     </a>
                 </div>
@@ -64,7 +61,7 @@
             <!-- Tabel Data Jenis -->
             <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs text-slate-600 border-collapse">
+                    <table class="min-w-[620px] w-full text-left text-xs text-slate-600 border-collapse">
                         <thead>
                             <tr class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] uppercase font-black text-slate-500 tracking-wider">
                                 <th scope="col" class="py-4 px-6 text-center w-16">No</th>

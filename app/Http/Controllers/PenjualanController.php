@@ -99,9 +99,21 @@ class PenjualanController extends Controller
                     ]);
                 }
 
+                $bayar = null;
+                $kembalian = null;
+                if ($isCompleted && strtoupper($request->input('metode_pembayaran', 'CASH')) === 'CASH') {
+                    $bayar = (int) $request->input('uang_dibayar', 0);
+                    if ($bayar < $totalHarga) {
+                        throw new \Exception('Uang dibayar harus sama atau lebih besar dari total transaksi.');
+                    }
+                    $kembalian = $bayar - $totalHarga;
+                }
+
                 $penjualan->update([
                     'total_harga'      => $totalHarga,
                     'total_pembayaran' => $isCompleted ? $totalHarga : 0,
+                    'bayar'            => $bayar,
+                    'kembalian'        => $kembalian,
                 ]);
             });
 
@@ -186,12 +198,25 @@ class PenjualanController extends Controller
                     ]);
                 }
 
+                $bayar = null;
+                $kembalian = null;
+                $metodePembayaran = strtoupper($request->input('metode_pembayaran', 'CASH'));
+                if ($isCheckout && $metodePembayaran === 'CASH' && $request->filled('uang_dibayar')) {
+                    $bayar = (int) $request->input('uang_dibayar');
+                    if ($bayar < $totalHarga) {
+                        throw new \Exception('Uang dibayar harus sama atau lebih besar dari total transaksi.');
+                    }
+                    $kembalian = $bayar - $totalHarga;
+                }
+
                 // 3. Update data transaksi utama
                 $penjualan->update([
                     'total_harga'       => $totalHarga,
                     'total_pembayaran'  => $isCheckout ? $totalHarga : 0,
                     'metode_pembayaran' => $request->input('metode_pembayaran', 'CASH'),
                     'status'            => $isCheckout ? 'COMPLETED' : 'OPEN',
+                    'bayar'             => $bayar,
+                    'kembalian'         => $kembalian,
                 ]);
             });
 

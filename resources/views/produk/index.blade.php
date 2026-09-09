@@ -45,9 +45,6 @@
                 <div>
                     <a href="{{ route('produk.create') }}" 
                        class="inline-flex items-center justify-center gap-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-sm hover:shadow transition-all duration-200 active:scale-95 border border-amber-300">
-                        <svg class="w-4 h-4 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path>
-                        </svg>
                         <span>Tambah Produk</span>
                     </a>
                 </div>
@@ -61,7 +58,7 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-xs">
+                    <table class="min-w-[760px] w-full text-left border-collapse text-xs">
                         <thead>
                             <tr class="bg-slate-50/50 border-b border-slate-200/80 text-slate-600">
                                 <th class="p-4 font-black uppercase tracking-wider w-12 text-center">#</th>

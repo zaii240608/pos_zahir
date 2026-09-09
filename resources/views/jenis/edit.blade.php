@@ -26,7 +26,7 @@
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
                 <div class="lg:col-span-5">
-                    <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden sticky top-6">
+                    <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden lg:sticky lg:top-6">
                         
                         <div class="px-6 py-4 bg-slate-50/80 border-b border-slate-200/80 flex items-center justify-between">
                             <h2 class="text-xs font-black uppercase tracking-wider text-slate-700">Form Update Jenis</h2>

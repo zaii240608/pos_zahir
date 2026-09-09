@@ -166,7 +166,7 @@
                     <h2 class="text-lg font-black text-slate-800 tracking-tight">Peringatan Stok</h2>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 gap-6">
                     <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
@@ -198,36 +198,6 @@
                         @endif
                     </div>
 
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                        <div>
-                            <div class="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                                    <h3 class="text-sm font-extrabold text-slate-800">Stok Habis</h3>
-                                </div>
-                                <span class="px-3 py-1 bg-rose-100/70 text-rose-800 border border-rose-200 text-[10px] font-black uppercase tracking-wider rounded-lg">Kritis</span>
-                            </div>
-
-                            <div class="divide-y divide-slate-100">
-                                @forelse($produkStokHabis as $item)
-                                    <div class="flex justify-between items-center py-3 hover:bg-slate-50/80 px-2 rounded-lg transition-colors">
-                                        <span class="text-xs font-bold text-slate-700">{{ $item->nama }}</span>
-                                        <span class="text-xs font-extrabold text-rose-800 bg-rose-50 px-3 py-1 rounded-xl border border-rose-200/60">
-                                            Stok: {{ $item->stok }}
-                                        </span>
-                                    </div>
-                                @empty
-                                    <p class="text-xs text-slate-400 py-6 text-center font-medium">Tidak ada produk yang habis stok.</p>
-                                @endforelse
-                            </div>
-                        </div>
-
-                        @if(method_exists($produkStokHabis, 'links'))
-                            <div class="mt-4 pt-4 border-t border-slate-100">
-                                {{ $produkStokHabis->withQueryString()->links() }}
-                            </div>
-                        @endif
-                    </div>
                 </div>
             </div>
 
