@@ -10,3 +10,7 @@ download database di drive terus masukan ke folder proyek pos terus lakuin hal d
 mysql -u root -p pos_zahir < backup_pos_zahir.sql
 php artisan storage:link
 php artisan serve
+
+HOW TO EXPORT UR NEW DATABASES
+mysqldump --column-statistics=0 -u root -p pos_zahir > backup_pos_zahir3.sql 
+IN FOLDER PROJECT
