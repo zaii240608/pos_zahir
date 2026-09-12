@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistem POS Zahir - Aplikasi Kasir</title>
+    <title>Toko Kelontong Zahir - Kasir dan Stok</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -49,8 +49,8 @@
                 <i data-lucide="shopping-cart" class="w-6 h-6"></i>
             </div>
             <div>
-                <h1 class="font-extrabold text-lg leading-none tracking-wide text-white">SISTEM POS</h1>
-                <span class="text-[10px] text-amber-300 font-semibold tracking-widest uppercase">Aplikasi Kasir</span>
+                <h1 class="font-extrabold text-lg leading-none tracking-wide text-white">TOKO KELONTONG ZAHIR</h1>
+                <span class="text-[10px] text-amber-300 font-semibold tracking-widest uppercase">Kasir dan Stok</span>
             </div>
         </div>
         
@@ -69,17 +69,17 @@
         </div>
 
         <h1 class="gsap-title text-3xl md:text-5xl font-extrabold text-slate-900 mb-6 leading-tight max-w-3xl">
-            Kelola Penjualan, Stok & Transaksi Kasir Dalam Satu Aplikasi
+            Kelola Toko Kelontong, Stok & Penjualan Dalam Satu Aplikasi
         </h1>
 
         <p class="gsap-desc text-base md:text-lg text-slate-600 mb-10 max-w-2xl font-medium leading-relaxed">
-            Solusi digital cepat dan presisi untuk memantau performa toko, ketersediaan produk, serta laporan riwayat penjualan harian Anda secara akurat.
+            Kelola barang kebutuhan sehari-hari, harga beli, harga jual, stok, dan transaksi pelanggan dengan rapi dalam satu aplikasi.
         </p>
 
         <!-- Call to Action -->
         <div class="gsap-btn flex flex-col sm:flex-row items-center gap-4 mb-14">
             <a href="{{ route('login') }}" class="inline-flex items-center gap-3 bg-brand-dark hover:bg-brand-card text-white font-bold text-lg px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-                <span>Masuk ke Halaman Kasir</span>
+                <span>Masuk ke Toko</span>
                 <i data-lucide="arrow-right" class="w-5 h-5 text-brand-accent"></i>
             </a>
 
@@ -123,7 +123,7 @@
 
     <!-- Footer -->
     <footer class="w-full text-center py-4 text-xs font-semibold text-slate-500 border-t border-slate-200 bg-white">
-        &copy; {{ date('Y') }} SISTEM POS. All rights reserved.
+        &copy; {{ date('Y') }} TOKO KELONTONG ZAHIR. All rights reserved.
     </footer>
 
     <!-- Script Lucide & GSAP Animations -->

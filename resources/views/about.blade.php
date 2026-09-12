@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tentang Aplikasi - POS')
+@section('title', 'Tentang Toko - Toko Kelontong Zahir')
 
 @section('content')
 
@@ -21,7 +21,7 @@
                             Solusi Kasir & Manajemen Stok Pintar
                         </h1>
                         <p class="text-teal-100/90 text-sm md:text-base font-normal leading-relaxed">
-                            Sistem Point of Sale (POS) modern yang dirancang presisi untuk mempercepat alur transaksi, pemantauan riwayat penjualan mendalam, dan pengelolaan inventaris secara real-time.
+                            Sistem toko kelontong modern untuk mempercepat transaksi, memantau stok barang, mencatat harga beli dan jual, serta merapikan laporan penjualan.
                         </p>
                     </div>
 
@@ -199,7 +199,7 @@
                     </div>
 
                     <p class="text-slate-500 text-xs leading-relaxed max-w-2xl">
-                        Dirancang dan dikembangkan sebagai solusi Point of Sale (POS) modular yang berfokus pada pengalaman pengguna yang intuitif, kecepatan proses transaksi, dan efisiensi manajemen inventaris toko.
+                        Dirancang dan dikembangkan untuk membantu toko kelontong mengelola barang kebutuhan sehari-hari, transaksi, stok, serta laporan usaha secara efisien.
                     </p>
                 </div>
             </div>

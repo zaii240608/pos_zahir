@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Jenis Produk - POS')
+@section('title', 'Daftar Jenis Barang - Toko Kelontong Zahir')
 
 @section('content')
 
@@ -11,7 +11,7 @@
 
             <!-- Flash Session Alerts -->
             @if(session('success'))
-                <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 text-emerald-900 text-xs font-semibold shadow-xs">
+                <div data-auto-dismiss class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 text-emerald-900 text-xs font-semibold shadow-xs">
                     <div class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
@@ -24,7 +24,7 @@
             @endif
 
             @if(session('error'))
-                <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-center gap-3 text-rose-900 text-xs font-semibold shadow-xs">
+                <div data-auto-dismiss class="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex items-center gap-3 text-rose-900 text-xs font-semibold shadow-xs">
                     <div class="w-8 h-8 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -50,7 +50,11 @@
                     </div>
                 </div>
 
-                <div>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <div class="relative w-full sm:w-64">
+                        <input type="search" id="jenis-search" placeholder="Cari jenis barang..." autocomplete="off"
+                               class="w-full bg-slate-50/80 border border-slate-200 text-slate-800 placeholder-slate-400 rounded-2xl pl-4 pr-4 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all">
+                    </div>
                     <a href="{{ route('admin.jenis.create') }}" 
                        class="inline-flex items-center justify-center gap-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-sm hover:shadow transition-all duration-200 active:scale-95 border border-amber-300">
                         <span>Tambah Jenis</span>
@@ -72,7 +76,7 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100 font-medium">
                             @forelse($jenisList as $index => $item)
-                                <tr class="hover:bg-slate-50/80 transition-colors">
+                                <tr class="jenis-row hover:bg-slate-50/80 transition-colors" data-search="{{ strtolower($item->nama_jenis) }}">
                                     <td class="py-4 px-6 text-center font-bold text-slate-400">
                                         {{ method_exists($jenisList, 'firstItem') ? $jenisList->firstItem() + $index : $index + 1 }}
                                     </td>
@@ -138,3 +142,19 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('jenis-search');
+        const rows = document.querySelectorAll('.jenis-row');
+
+        searchInput?.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase().trim();
+            rows.forEach(row => {
+                row.classList.toggle('hidden', !row.dataset.search.includes(searchTerm));
+            });
+        });
+    });
+</script>
+@endpush

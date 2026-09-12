@@ -40,7 +40,7 @@ class PenjualanController extends Controller
             ->where('status', 'OPEN')
             ->first();
 
-        $produks = Produk::all();
+        $produks = Produk::with('jenis')->get();
 
         return view('penjualan.create', compact('penjualan', 'produks'));
     }
@@ -139,7 +139,7 @@ class PenjualanController extends Controller
                 ->with('error', 'Transaksi yang sudah selesai tidak dapat diedit.');
         }
 
-        $produks = Produk::all();
+        $produks = Produk::with('jenis')->get();
 
         return view('penjualan.edit', compact('penjualan', 'produks'));
     }

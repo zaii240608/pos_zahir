@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Produk - POS')
+@section('title', 'Detail Barang - Toko Kelontong Zahir')
 
 @section('content')
 
@@ -23,15 +23,17 @@
                     </div>
                 </div>
 
-                <div class="flex items-center gap-2">
-                    <a href="{{ route('produk.edit', $produk->id) }}" 
-                       class="inline-flex items-center justify-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-4 py-2.5 rounded-2xl transition-all duration-150 border border-amber-300 shadow-xs active:scale-95">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                        </svg>
-                        <span>Edit Produk</span>
-                    </a>
-                </div>
+                @can('update', $produk)
+                    <div class="flex items-center gap-2">
+                        <a href="{{ route('produk.edit', $produk->id) }}" 
+                           class="inline-flex items-center justify-center gap-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs px-4 py-2.5 rounded-2xl transition-all duration-150 border border-amber-300 shadow-xs active:scale-95">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                            <span>Edit Produk</span>
+                        </a>
+                    </div>
+                @endcan
             </div>
 
             <!-- Detail Main Content Card -->
@@ -88,6 +90,14 @@
                                             <span class="text-xs font-bold text-slate-400 italic">Belum diset</span>
                                         @endif
                                     </div>
+                                </div>
+
+                                <!-- Harga Beli -->
+                                <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/80">
+                                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Harga Beli</span>
+                                    <p class="text-xl font-black mt-1">
+                                        Rp {{ number_format($produk->harga_beli ?? 0, 0, ',', '.') }}
+                                    </p>
                                 </div>
 
                                 <!-- Harga Jual -->

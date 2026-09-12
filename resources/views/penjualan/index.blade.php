@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Penjualan - POS')
+@section('title', 'Daftar Penjualan - Toko Kelontong Zahir')
 
 @section('content')
 
@@ -11,7 +11,7 @@
             
             <!-- Notifikasi Pesan -->
             @if(session('success'))
-                <div class="flex items-center gap-3 bg-teal-500/10 border border-teal-500/20 text-teal-800 px-5 py-4 rounded-2xl shadow-xs">
+                <div data-auto-dismiss class="flex items-center gap-3 bg-teal-500/10 border border-teal-500/20 text-teal-800 px-5 py-4 rounded-2xl shadow-xs">
                     <svg class="w-5 h-5 text-teal-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -20,7 +20,7 @@
             @endif
 
             @if(session('error'))
-                <div class="flex items-center gap-3 bg-rose-500/10 border border-rose-500/20 text-rose-800 px-5 py-4 rounded-2xl shadow-xs">
+                <div data-auto-dismiss class="flex items-center gap-3 bg-rose-500/10 border border-rose-500/20 text-rose-800 px-5 py-4 rounded-2xl shadow-xs">
                     <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -46,14 +46,15 @@
 
                 <!-- Sisi Kanan: Input Cari + Tombol Tambah Transaksi -->
                 <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                    <form action="{{ route('penjualan.index') }}" method="GET" class="flex items-center gap-2">
+                    <form action="{{ route('penjualan.index') }}" method="GET" class="flex items-center gap-2" onsubmit="return false;">
                         <div class="relative w-full sm:w-64">
                             <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
                             </div>
-                            <input type="text" 
+                            <input type="search" 
+                                id="penjualan-search"
                                    name="search" 
                                    value="{{ request('search') }}" 
                                    placeholder="Cari transaksi..." 
@@ -93,7 +94,8 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse($sales as $index => $sale)
-                                <tr class="hover:bg-slate-50/50 transition-colors">
+                                <tr class="penjualan-row hover:bg-slate-50/50 transition-colors"
+                                    data-search="{{ strtolower(($sale->created_at ? $sale->created_at->format('d-m-Y H:i:s') : '') . ' ' . ($sale->user->name ?? '') . ' ' . ($sale->metode_pembayaran ?? '') . ' ' . ($sale->status ?? '') . ' ' . ($sale->total_pembayaran ?? $sale->total_harga ?? '')) }}">
                                     <td class="p-4 text-slate-800 font-bold">
                                         {{ $sales->firstItem() + $index }}
                                     </td>
@@ -177,3 +179,19 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('penjualan-search');
+        const rows = document.querySelectorAll('.penjualan-row');
+
+        searchInput?.addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase().trim();
+            rows.forEach(row => {
+                row.classList.toggle('hidden', !row.dataset.search.includes(searchTerm));
+            });
+        });
+    });
+</script>
+@endpush

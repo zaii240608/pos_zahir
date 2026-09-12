@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'POS System')</title>
+    <title>@yield('title', 'Toko Kelontong Zahir')</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 
     <!-- Tailwind CSS Play CDN -->
@@ -32,41 +32,78 @@
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-<body class="bg-stone-100 text-stone-800 antialiased min-h-screen">
+<body class="bg-stone-100 text-stone-800 antialiased min-h-screen overflow-x-hidden">
 
     <!-- Tempat konten dipanggil (tanpa margin/padding pembatas di luar) -->
-    <main class="w-full">
+    <main class="w-full min-w-0 overflow-x-hidden">
         @yield('content')
     </main>
 
-    <!-- Script Global SweetAlert2 -->
-    <script>
-        // Pop-up Notifikasi Sukses dari Controller
-        // @if(session('success'))
-        //     Swal.fire({
-        //         icon: 'success',
-        //         title: 'Berhasil!',
-        //         text: "{{ session('success') }}",
-        //         showConfirmButton: false,
-        //         timer: 2000,
-        //         customClass: {
-        //             popup: 'rounded-2xl'
-        //         }
-        //     });
-        // @endif
+    @if(session('success') || session('error') || session('warning'))
+        @php
+            $notificationType = session('success') ? 'success' : (session('warning') ? 'warning' : 'error');
+            $notificationMessage = session('success') ?? session('warning') ?? session('error');
+            $notificationStyles = [
+                'success' => 'border-emerald-200 bg-emerald-50 text-emerald-900',
+                'warning' => 'border-amber-200 bg-amber-50 text-amber-900',
+                'error' => 'border-rose-200 bg-rose-50 text-rose-900',
+            ];
+        @endphp
+        <div id="global-notification" role="status" aria-live="polite"
+             class="fixed right-4 top-20 z-[100] flex max-w-sm items-start gap-3 rounded-2xl border px-4 py-3 text-xs font-semibold shadow-lg transition-all duration-300 {{ $notificationStyles[$notificationType] }}">
+            <span class="mt-0.5 shrink-0 text-sm font-black">
+                {{ $notificationType === 'success' ? '✓' : ($notificationType === 'warning' ? '!' : '×') }}
+            </span>
+            <span class="flex-1">{{ $notificationMessage }}</span>
+            <button type="button" onclick="dismissGlobalNotification()" class="shrink-0 text-current opacity-60 transition hover:opacity-100" aria-label="Tutup notifikasi">×</button>
+        </div>
+    @endif
 
-        // Pop-up Notifikasi Error dari Controller
-        @if(session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                text: "{{ session('error') }}",
-                confirmButtonColor: '#dc2626',
-                customClass: {
-                    popup: 'rounded-2xl'
-                }
-            });
-        @endif
+    <!-- Script Global Notifikasi dan Konfirmasi -->
+    <script>
+        function dismissGlobalNotification() {
+            const notification = document.getElementById('global-notification');
+            if (!notification) return;
+
+            notification.classList.add('translate-x-8', 'opacity-0');
+            setTimeout(() => notification.remove(), 300);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[data-auto-dismiss]').forEach((notification) => notification.remove());
+
+            if (document.getElementById('global-notification')) {
+                setTimeout(dismissGlobalNotification, 3000);
+            }
+        });
+
+        function showToast(message, type = 'success') {
+            const colors = {
+                success: 'border-emerald-200 bg-emerald-50 text-emerald-900',
+                warning: 'border-amber-200 bg-amber-50 text-amber-900',
+                error: 'border-rose-200 bg-rose-50 text-rose-900'
+            };
+            const icons = { success: '✓', warning: '!', error: '×' };
+            const existing = document.getElementById('client-notification');
+            if (existing) existing.remove();
+
+            const notification = document.createElement('div');
+            notification.id = 'client-notification';
+            notification.setAttribute('role', 'status');
+            notification.setAttribute('aria-live', 'polite');
+            notification.className = `fixed right-4 top-20 z-[100] flex max-w-sm items-start gap-3 rounded-2xl border px-4 py-3 text-xs font-semibold shadow-lg transition-all duration-300 ${colors[type] || colors.success}`;
+            notification.innerHTML = `<span class="mt-0.5 shrink-0 text-sm font-black">${icons[type] || icons.success}</span><span class="flex-1"></span><button type="button" class="shrink-0 text-current opacity-60 transition hover:opacity-100" aria-label="Tutup notifikasi">×</button>`;
+            notification.querySelector('.flex-1').textContent = message;
+            notification.querySelector('button').addEventListener('click', () => dismissClientNotification(notification));
+            document.body.appendChild(notification);
+            setTimeout(() => dismissClientNotification(notification), 3000);
+        }
+
+        function dismissClientNotification(notification) {
+            if (!notification || !notification.isConnected) return;
+            notification.classList.add('translate-x-8', 'opacity-0');
+            setTimeout(() => notification.remove(), 300);
+        }
 
         // Helper Function Global untuk Konfirmasi Hapus Data
         function confirmDelete(formId, message = "Data yang dihapus tidak dapat dikembalikan!") {

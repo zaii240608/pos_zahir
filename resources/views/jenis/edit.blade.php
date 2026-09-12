@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Jenis & List Produk - POS')
+@section('title', 'Edit Jenis Barang - Toko Kelontong Zahir')
 
 @section('content')
 

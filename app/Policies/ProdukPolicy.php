@@ -29,7 +29,7 @@ class ProdukPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role && in_array(strtolower($user->role->name), ['admin', 'kasir']);
+        return strtolower($user->role->name ?? '') === 'admin';
     }
 
     /**
@@ -37,7 +37,7 @@ class ProdukPolicy
      */
     public function update(User $user, Produk $produk): bool
     {
-        return $user->role && in_array(strtolower($user->role->name), ['admin', 'kasir']);
+        return strtolower($user->role->name ?? '') === 'admin';
     }
 
     /**
@@ -45,7 +45,7 @@ class ProdukPolicy
      */
     public function delete(User $user, Produk $produk): bool
     {
-        return $user->role && in_array(strtolower($user->role->name), ['admin', 'kasir']);
+        return strtolower($user->role->name ?? '') === 'admin';
     }
 
     /**

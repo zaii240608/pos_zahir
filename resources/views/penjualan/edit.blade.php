@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit Penjualan - Sistem Kasir')
+@section('title', 'Edit Transaksi - Toko Kelontong Zahir')
 
 @section('content')
     @include('layouts.navbar')
@@ -33,7 +33,7 @@
                             Katalog Produk
                         </h2>
                         
-                        <div class="relative w-full sm:w-72">
+                        <div class="relative w-full sm:w-64">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-stone-400">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -42,6 +42,14 @@
                             <input type="text" id="search-input" placeholder="Cari nama produk..." 
                                    class="w-full border border-stone-200 rounded-2xl pl-10 pr-4 py-2.5 text-xs bg-stone-50/50 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 focus:bg-white transition shadow-inner">
                         </div>
+
+                        <select id="jenis-filter" aria-label="Filter jenis produk"
+                                class="w-full sm:w-48 border border-stone-200 rounded-2xl px-3 py-2.5 text-xs bg-stone-50/50 text-stone-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 focus:bg-white transition shadow-inner">
+                            <option value="">Semua jenis</option>
+                            @foreach($produks->pluck('jenis')->filter()->unique('id')->sortBy('nama_jenis') as $jenis)
+                                <option value="{{ $jenis->id }}">{{ $jenis->nama_jenis }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     
                     <!-- Grid Produk -->
@@ -56,6 +64,7 @@
                             <div class="product-card group bg-stone-50/40 border border-amber-200/60 rounded-3xl p-5 flex items-center gap-4 hover:border-teal-300 hover:bg-teal-50/30 transition-all duration-300 shadow-sm hover:shadow-md"
                                  data-id="{{ $produk->id }}" 
                                  data-nama="{{ $produk->nama }}" 
+                                 data-jenis="{{ $produk->jenis_id }}"
                                  data-harga="{{ $produk->harga_jual ?? $produk->harga }}" 
                                  data-stok="{{ $stokMaksimal }}">
                                 
@@ -106,7 +115,7 @@
                 </div>
 
                 <!-- KANAN: Keranjang Belanja -->
-                <div class="bg-white rounded-3xl p-6 border border-amber-200/60 shadow-lg flex flex-col xl:sticky xl:top-6 max-h-none xl:max-h-[calc(100vh-48px)] transition-all duration-300 hover:shadow-xl">
+                <div class="bg-white rounded-3xl p-6 border border-amber-200/60 shadow-lg flex flex-col xl:sticky xl:top-6 max-h-none xl:max-h-[calc(100vh-48px)] xl:overflow-y-auto transition-all duration-300 hover:shadow-xl">
                     
                     <div class="flex items-center justify-between pb-4 border-b border-amber-100 mb-4 gap-2">
                         <div class="flex items-center gap-2.5">
@@ -184,7 +193,8 @@
                                 </button>
                             </div>
 
-                            <a href="{{ route('penjualan.index') }}" 
+                                     <a href="{{ route('penjualan.index') }}" 
+                                         onclick="if (document.referrer && new URL(document.referrer).origin === window.location.origin) { event.preventDefault(); window.history.back(); }"
                                class="w-full bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3 px-4 rounded-2xl border border-stone-200 transition-all text-xs flex items-center justify-center">
                                 Kembali 
                             </a>
@@ -263,17 +273,24 @@
 
         function initLiveSearch() {
             const searchInput = document.getElementById('search-input');
+            const jenisFilter = document.getElementById('jenis-filter');
             const productCards = document.querySelectorAll('.product-card');
 
-            if (searchInput) {
-                searchInput.addEventListener('input', function (e) {
-                    const searchTerm = e.target.value.toLowerCase().trim();
-                    productCards.forEach(card => {
-                        const productName = card.getAttribute('data-nama').toLowerCase();
-                        card.style.display = productName.includes(searchTerm) ? 'flex' : 'none';
-                    });
+            function filterProducts() {
+                const searchTerm = (searchInput?.value || '').toLowerCase().trim();
+                const selectedJenis = jenisFilter?.value || '';
+
+                productCards.forEach(card => {
+                    const productName = (card.getAttribute('data-nama') || '').toLowerCase();
+                    const productJenis = card.getAttribute('data-jenis') || '';
+                    const matchesSearch = productName.includes(searchTerm);
+                    const matchesJenis = !selectedJenis || productJenis === selectedJenis;
+                    card.style.display = matchesSearch && matchesJenis ? 'flex' : 'none';
                 });
             }
+
+            searchInput?.addEventListener('input', filterProducts);
+            jenisFilter?.addEventListener('change', filterProducts);
         }
 
         function tambahKeKeranjang(produkId) {
@@ -296,7 +313,7 @@
             const totalPermintaan = qtyDiKeranjangSaatIni + qtyAkanDitambahkan;
 
             if (totalPermintaan > stokFisik) {
-                alert(`Stok tidak mencukupi. Stok tersedia: ${stokFisik} Pcs.`);
+                showToast(`Stok tidak mencukupi. Stok tersedia: ${stokFisik} Pcs.`, 'error');
                 return;
             }
 
@@ -328,7 +345,7 @@
             if (isNaN(newQty) || newQty < 1) newQty = 1;
 
             if (newQty > item.stok_max) {
-                alert(`Stok maksimal adalah ${item.stok_max} Pcs.`);
+                showToast(`Stok maksimal adalah ${item.stok_max} Pcs.`, 'warning');
                 newQty = item.stok_max;
                 inputElement.value = item.stok_max;
             }

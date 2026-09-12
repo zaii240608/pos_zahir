@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Edit User - POS System')
+@section('title', 'Edit Pengguna - Toko Kelontong Zahir')
 
 @section('content')
 

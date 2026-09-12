@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Produk - POS')
+@section('title', 'Daftar Barang - Toko Kelontong Zahir')
 
 @section('content')
 
@@ -9,25 +9,6 @@
     <div class="min-h-screen bg-slate-100/70 py-8 text-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             
-            <!-- Notifikasi Pesan -->
-            @if(session('success'))
-                <div id="success-alert" class="flex items-center justify-between gap-3 bg-teal-500/10 border border-teal-500/20 text-teal-800 px-5 py-4 rounded-3xl shadow-xs transition-opacity duration-500">
-                    <div class="flex items-center gap-3">
-                        <div class="p-1.5 bg-teal-500/20 text-teal-700 rounded-xl">
-                            <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                        </div>
-                        <span class="text-xs font-bold">{{ session('success') }}</span>
-                    </div>
-                    <button type="button" onclick="dismissAlert('success-alert')" class="text-teal-600 hover:text-teal-800 p-1 rounded-lg hover:bg-teal-500/10 transition duration-150">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                        </svg>
-                    </button>
-                </div>
-            @endif
-
             <!-- Clean Header Card -->
             <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div class="flex items-center gap-4">
@@ -37,16 +18,29 @@
                         </svg>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Daftar Produk POS</h1>
-                        <p class="text-xs font-medium text-slate-500 mt-0.5">Kelola katalog produk, stok, dan harga penjualan toko Anda</p>
+                        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Daftar Barang</h1>
+                        <p class="text-xs font-medium text-slate-500 mt-0.5">Kelola barang, stok, harga beli, dan harga jual toko Anda</p>
                     </div>
                 </div>
 
-                <div>
-                    <a href="{{ route('produk.create') }}" 
-                       class="inline-flex items-center justify-center gap-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-sm hover:shadow transition-all duration-200 active:scale-95 border border-amber-300">
-                        <span>Tambah Produk</span>
-                    </a>
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <div class="relative w-full sm:w-64">
+                        <input type="search" id="produk-search" placeholder="Cari barang..." autocomplete="off"
+                               class="w-full bg-slate-50/80 border border-slate-200 text-slate-800 placeholder-slate-400 rounded-2xl pl-4 pr-4 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all">
+                    </div>
+                    <select id="produk-jenis-filter" aria-label="Filter jenis produk"
+                            class="w-full sm:w-48 bg-slate-50/80 border border-slate-200 text-slate-800 rounded-2xl px-3 py-2.5 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all">
+                        <option value="">Semua jenis</option>
+                        @foreach($produks->pluck('jenis')->filter()->unique('id')->sortBy('nama_jenis') as $jenis)
+                            <option value="{{ $jenis->id }}">{{ $jenis->nama_jenis }}</option>
+                        @endforeach
+                    </select>
+                    @can('create', \App\Models\Produk::class)
+                        <a href="{{ route('produk.create') }}" 
+                           class="inline-flex items-center justify-center gap-2.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs sm:text-sm px-5 py-3 rounded-2xl shadow-sm hover:shadow transition-all duration-200 active:scale-95 border border-amber-300">
+                            <span>Tambah Produk</span>
+                        </a>
+                    @endcan
                 </div>
             </div>
 
@@ -65,6 +59,7 @@
                                 <th class="p-4 font-black uppercase tracking-wider w-16">Foto</th>
                                 <th class="p-4 font-black uppercase tracking-wider">Nama Produk</th>
                                 <th class="p-4 font-black uppercase tracking-wider">Jenis Produk</th>
+                                <th class="p-4 font-black uppercase tracking-wider">Harga Beli</th>
                                 <th class="p-4 font-black uppercase tracking-wider">Harga Jual</th>
                                 <th class="p-4 font-black uppercase tracking-wider">Stok</th>
                                 <th class="p-4 font-black uppercase tracking-wider text-center w-48">Aksi</th>
@@ -72,7 +67,9 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100 font-semibold text-slate-700">
                             @forelse($produks as $index => $produk)
-                                <tr class="hover:bg-slate-50/80 transition-colors">
+                                <tr class="produk-row hover:bg-slate-50/80 transition-colors"
+                                    data-jenis="{{ $produk->jenis_id }}"
+                                    data-search="{{ strtolower($produk->nama . ' ' . ($produk->jenis?->nama_jenis ?? '') . ' ' . ($produk->harga_jual ?? '') . ' ' . ($produk->stok ?? '')) }}">
                                     <td class="p-4 text-center font-bold text-slate-500">
                                         {{ $produks->firstItem() + $index }}
                                     </td>
@@ -99,6 +96,9 @@
                                             <span class="text-slate-400 italic text-[11px]">-</span>
                                         @endif
                                     </td>
+                                    <td class="p-4 font-black whitespace-nowrap text-slate-500">
+                                        Rp {{ number_format($produk->harga_beli ?? 0, 0, ',', '.') }}
+                                    </td>
                                     <td class="p-4 font-black whitespace-nowrap">
                                         Rp {{ number_format($produk->harga_jual, 0, ',', '.') }}
                                     </td>
@@ -119,28 +119,32 @@
                                                 Detail
                                             </a>
 
-                                            <!-- Tombol Edit -->
-                                            <a href="{{ route('produk.edit', $produk->id) }}" 
-                                               class="px-3 py-1.5 bg-amber-400/20 hover:bg-amber-400/30 text-amber-900 font-bold rounded-xl border border-amber-400/30 transition duration-150 active:scale-95 text-[11px]">
-                                                Edit
-                                            </a>
+                                            @can('update', $produk)
+                                                <!-- Tombol Edit -->
+                                                <a href="{{ route('produk.edit', $produk->id) }}" 
+                                                   class="px-3 py-1.5 bg-amber-400/20 hover:bg-amber-400/30 text-amber-900 font-bold rounded-xl border border-amber-400/30 transition duration-150 active:scale-95 text-[11px]">
+                                                    Edit
+                                                </a>
+                                            @endcan
 
-                                            <!-- Tombol Hapus -->
-                                            <form action="{{ route('produk.destroy', $produk->id) }}" method="POST" id="delete-produk-form-{{ $produk->id }}" class="inline-block">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" 
-                                                        onclick="confirmDelete('delete-produk-form-{{ $produk->id }}', 'Apakah Anda yakin ingin menghapus produk {{ $produk->nama }}?')" 
-                                                        class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 font-bold rounded-xl border border-rose-500/20 transition duration-150 active:scale-95 text-[11px]">
-                                                    Hapus
-                                                </button>
-                                            </form>
+                                            @can('delete', $produk)
+                                                <!-- Tombol Hapus -->
+                                                <form action="{{ route('produk.destroy', $produk->id) }}" method="POST" id="delete-produk-form-{{ $produk->id }}" class="inline-block">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" 
+                                                            onclick="confirmDelete('delete-produk-form-{{ $produk->id }}', 'Apakah Anda yakin ingin menghapus produk {{ $produk->nama }}?')" 
+                                                            class="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-700 font-bold rounded-xl border border-rose-500/20 transition duration-150 active:scale-95 text-[11px]">
+                                                        Hapus
+                                                    </button>
+                                                </form>
+                                            @endcan
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center text-slate-400 py-12 text-xs">
+                                    <td colspan="8" class="text-center text-slate-400 py-12 text-xs">
                                         <div class="flex flex-col items-center justify-center gap-2">
                                             <div class="p-3 bg-slate-100 rounded-2xl border border-slate-200/80">
                                                 <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -170,19 +174,25 @@
 
 @push('scripts')
 <script>
-    function dismissAlert(alertId) {
-        let alertBox = document.getElementById(alertId);
-        if (alertBox) {
-            alertBox.style.transition = 'opacity 0.5s ease';
-            alertBox.style.opacity = '0';
-            setTimeout(() => alertBox.remove(), 500);
-        }
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            dismissAlert('success-alert');
-        }, 4000);
+        const searchInput = document.getElementById('produk-search');
+        const jenisFilter = document.getElementById('produk-jenis-filter');
+        const rows = document.querySelectorAll('.produk-row');
+
+        function filterProduk() {
+            const searchTerm = (searchInput?.value || '').toLowerCase().trim();
+            const selectedJenis = jenisFilter?.value || '';
+
+            rows.forEach(row => {
+                const matchesSearch = row.dataset.search.includes(searchTerm);
+                const matchesJenis = !selectedJenis || row.dataset.jenis === selectedJenis;
+                row.classList.toggle('hidden', !(matchesSearch && matchesJenis));
+            });
+        }
+
+        searchInput?.addEventListener('input', filterProduk);
+        jenisFilter?.addEventListener('change', filterProduk);
     });
+
 </script>
 @endpush

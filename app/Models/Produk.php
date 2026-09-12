@@ -17,6 +17,7 @@ class Produk extends Model
         'nama',
         'jenis_id',
         'deskripsi',
+        'harga_beli',
         'harga_jual',
         'stok',
     ];

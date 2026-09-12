@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen User - POS')
+@section('title', 'Manajemen Pengguna - Toko Kelontong Zahir')
 
 @section('content')
 
@@ -19,7 +19,7 @@
                     </div>
                     <div>
                         <h1 class="text-2xl font-black text-slate-900 tracking-tight">Kelola Pengguna</h1>
-                        <p class="text-xs font-medium text-slate-500 mt-0.5">Kelola data pengguna dan hak akses akun dalam sistem POS</p>
+                        <p class="text-xs font-medium text-slate-500 mt-0.5">Kelola data pengguna dan hak akses akun toko kelontong</p>
                     </div>
                 </div>
 
@@ -59,7 +59,7 @@
 
             <!-- Alert Flash Session -->
             @if(session('warning'))
-                <div class="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 flex items-start sm:items-center gap-3 text-amber-900 text-xs font-medium shadow-xs transition">
+                <div data-auto-dismiss class="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 flex items-start sm:items-center gap-3 text-amber-900 text-xs font-medium shadow-xs transition">
                     <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5 sm:mt-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                     </svg>
@@ -70,7 +70,7 @@
             @endif
 
             @if(session('error'))
-                <div class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-start sm:items-center gap-3 text-rose-900 text-xs font-medium shadow-xs transition">
+                <div data-auto-dismiss class="mb-6 p-4 rounded-xl bg-rose-50 border border-rose-200 flex items-start sm:items-center gap-3 text-rose-900 text-xs font-medium shadow-xs transition">
                     <svg class="w-5 h-5 text-rose-600 shrink-0 mt-0.5 sm:mt-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -81,7 +81,7 @@
             @endif
 
             @if(session('success'))
-                <div class="mb-6 p-4 rounded-xl bg-teal-50 border border-teal-200 flex items-start sm:items-center gap-3 text-teal-900 text-xs font-medium shadow-xs transition">
+                <div data-auto-dismiss class="mb-6 p-4 rounded-xl bg-teal-50 border border-teal-200 flex items-start sm:items-center gap-3 text-teal-900 text-xs font-medium shadow-xs transition">
                     <svg class="w-5 h-5 text-teal-600 shrink-0 mt-0.5 sm:mt-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>

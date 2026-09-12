@@ -25,6 +25,7 @@ class ProdukFactory extends Factory
             'user_id' => User::where('role_id', 1)->inRandomOrder()->value('id'),
             'foto' => 'produk/' . $this->faker->uuid . '.jpg',
             'nama' => $this->faker->words(3, true),
+            'harga_beli' => $hargabeli,
             'harga_jual' => $hargajual,
             'stok' => fake()->numberBetween(1, 500),
         ];

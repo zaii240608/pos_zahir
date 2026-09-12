@@ -47,7 +47,7 @@
                 
                 <!-- Header Toko & Nota -->
                 <div class="text-center space-y-1 pb-4 border-b-2 border-dashed border-stone-300 print:border-black">
-                    <h2 class="text-2xl font-black text-stone-900 tracking-tight uppercase print:text-black">SISTEM POS</h2>
+                    <h2 class="text-2xl font-black text-stone-900 tracking-tight uppercase print:text-black">TOKO KELONTONG ZAHIR</h2>
                     <p class="text-xs font-bold text-stone-500 print:text-stone-800">Struk Bukti Pembayaran</p>
                     <div class="pt-2 flex items-center justify-center gap-2 text-sm font-black text-stone-800 print:text-black">
                         <span>#{{ $penjualan->id }}</span>

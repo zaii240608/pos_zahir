@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - SISTEM POS</title>
+    <title>Masuk - Toko Kelontong Zahir</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -84,7 +84,7 @@
                     Selamat <span class="text-teal-600">Datang</span>
                 </h2>
                 <p class="text-xs font-medium text-slate-500 mt-1.5">
-                    Masukkan kredensial akun Anda untuk mengakses SISTEM POS.
+                    Masukkan kredensial akun Anda untuk mengakses Toko Kelontong Zahir.
                 </p>
             </div>
 
@@ -138,7 +138,7 @@
 
         <!-- Footer Copyright -->
             <p class="text-[11px] font-semibold text-slate-400 tracking-wider hover:text-slate-600 transition-colors">
-            &copy; {{ date('Y') }} SISTEM POS. All rights reserved.
+            &copy; {{ date('Y') }} TOKO KELONTONG ZAHIR. All rights reserved.
         </p>
     </div>
 
@@ -206,7 +206,7 @@
             popup.classList.add('translate-y-0', 'opacity-100');
 
             if (alertTimeout) clearTimeout(alertTimeout);
-            alertTimeout = setTimeout(() => { closeAlert(); }, 3500);
+                alertTimeout = setTimeout(() => { closeAlert(); }, 3000);
         }
 
         window.closeAlert = function() {

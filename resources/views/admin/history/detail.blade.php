@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Transaksi - POS')
+@section('title', 'Detail Transaksi - Toko Kelontong Zahir')
 
 @section('content')
 

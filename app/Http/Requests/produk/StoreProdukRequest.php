@@ -17,6 +17,7 @@ class StoreProdukRequest extends FormRequest
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'jenis_id'   => 'required|exists:jenis,id',
             'nama' => 'required|string|max:255',
+            'harga_beli' => 'required|numeric|min:0',
             'harga_jual' => 'required|numeric|min:0',
             'stok' => 'required|integer|min:0',
         ];

@@ -1,6 +1,6 @@
-<nav class="relative w-full bg-[#0f4c4a] border-b border-teal-800 text-white shadow-md sticky top-0 z-50">
+<nav class="relative w-full max-w-full overflow-hidden bg-[#0f4c4a] border-b border-teal-800 text-white shadow-md sticky top-0 z-50">
   <div class="w-full px-4 sm:px-6 lg:px-8">
-    <div class="flex min-h-16 flex-wrap items-center justify-between gap-3 py-2 md:flex-nowrap md:py-0">
+    <div class="flex min-h-16 min-w-0 flex-wrap items-center justify-between gap-3 py-2 md:flex-nowrap md:py-0">
       
       <!-- Sisi Kiri: Logo & Navigasi Utama -->
       <div class="flex min-w-0 flex-1 items-center space-x-4 lg:space-x-8">
@@ -14,10 +14,10 @@
           </div>
           <div class="flex min-w-0 flex-col">
             <span class="truncate font-black text-lg tracking-wider text-white uppercase group-hover:text-amber-300 transition-colors leading-tight">
-              Sistem POS
+              Toko Kelontong Zahir
             </span>
             <span class="truncate text-[10px] tracking-widest text-amber-300/80 font-medium uppercase leading-tight">
-              Aplikasi Kasir
+              Manajemen Toko
             </span>
           </div>
         </a>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Produk - POS')
+@section('title', 'Tambah Barang - Toko Kelontong Zahir')
 
 @section('content')
     @include('layouts.navbar')
@@ -60,8 +60,21 @@
                         @enderror
                     </div>
 
-                    <!-- Grid Harga Jual & Stok -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- Grid Harga Beli, Harga Jual & Stok -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <!-- Harga Beli -->
+                        <div>
+                            <label for="harga_beli" class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2">
+                                Harga Beli (Rp) <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="number" name="harga_beli" id="harga_beli" value="{{ old('harga_beli') }}" min="0" required
+                                   placeholder="0"
+                                   class="w-full rounded-2xl border-slate-200 shadow-2xs focus:border-teal-500 focus:ring-teal-500 text-xs font-medium border px-4 py-3 text-slate-900 transition-all">
+                            @error('harga_beli')
+                                <p class="text-rose-600 text-xs mt-1.5 font-bold">{{ $message }}</p>
+                            @enderror
+                        </div>
+
                         <!-- Harga Jual -->
                         <div>
                             <label for="harga_jual" class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2">

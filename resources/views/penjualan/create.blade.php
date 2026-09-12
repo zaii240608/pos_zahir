@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Penjualan - Sistem Kasir')
+@section('title', 'Transaksi Baru - Toko Kelontong Zahir')
 
 @section('content')
     @include('layouts.navbar')
@@ -33,7 +33,7 @@
                             Katalog Produk
                         </h2>
                         
-                        <div class="relative w-full sm:w-72">
+                        <div class="relative w-full sm:w-64">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-stone-400">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -42,6 +42,14 @@
                             <input type="text" id="search-input" placeholder="Cari nama produk..." 
                                    class="w-full border border-stone-200 rounded-2xl pl-10 pr-4 py-2.5 text-xs bg-stone-50/50 text-stone-800 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 focus:bg-white transition shadow-inner">
                         </div>
+
+                        <select id="jenis-filter" aria-label="Filter jenis produk"
+                                class="w-full sm:w-48 border border-stone-200 rounded-2xl px-3 py-2.5 text-xs bg-stone-50/50 text-stone-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 focus:bg-white transition shadow-inner">
+                            <option value="">Semua jenis</option>
+                            @foreach($produks->pluck('jenis')->filter()->unique('id')->sortBy('nama_jenis') as $jenis)
+                                <option value="{{ $jenis->id }}">{{ $jenis->nama_jenis }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     
                     <!-- Grid Produk -->
@@ -50,6 +58,7 @@
                             <div class="product-card group bg-stone-50/40 border border-amber-200/60 rounded-3xl p-5 flex items-center gap-4 hover:border-teal-300 hover:bg-teal-50/30 transition-all duration-300 shadow-sm hover:shadow-md"
                                  data-id="{{ $produk->id }}" 
                                  data-nama="{{ $produk->nama }}" 
+                                 data-jenis="{{ $produk->jenis_id }}"
                                  data-harga="{{ $produk->harga_jual }}" 
                                  data-stok="{{ $produk->stok }}">
                                 
@@ -103,7 +112,7 @@
                 </div>
 
                 <!-- KANAN: Keranjang Belanja (Sticky) -->
-                <div class="bg-white rounded-3xl p-6 border border-amber-200/60 shadow-lg flex flex-col xl:sticky xl:top-6 max-h-none xl:max-h-[calc(100vh-48px)] transition-all duration-300 hover:shadow-xl">
+                <div class="bg-white rounded-3xl p-6 border border-amber-200/60 shadow-lg flex flex-col xl:sticky xl:top-6 max-h-none xl:max-h-[calc(100vh-48px)] xl:overflow-y-auto transition-all duration-300 hover:shadow-xl">
                     
                     <!-- Header Keranjang -->
                     <div class="flex items-center justify-between pb-4 border-b border-amber-100 mb-4 gap-2">
@@ -207,7 +216,8 @@
                             </div>
 
                             <!-- TOMBOL KEMBALI DI BWAH TOMBOL SIMPAN & PROSES SELESAI -->
-                            <a href="{{ route('penjualan.index') }}" 
+                                     <a href="{{ route('penjualan.index') }}" 
+                                         onclick="if (document.referrer && new URL(document.referrer).origin === window.location.origin) { event.preventDefault(); window.history.back(); }"
                                class="w-full bg-stone-100 hover:bg-stone-200 text-stone-700 font-bold py-3 px-4 rounded-2xl border border-stone-200/80 transition-all duration-200 text-xs flex items-center justify-center gap-2 active:scale-95">
                                 Kembali 
                             </a>
@@ -301,17 +311,24 @@
 
         function initLiveSearch() {
             const searchInput = document.getElementById('search-input');
+            const jenisFilter = document.getElementById('jenis-filter');
             const productCards = document.querySelectorAll('.product-card');
 
-            if (searchInput) {
-                searchInput.addEventListener('input', function (e) {
-                    const searchTerm = e.target.value.toLowerCase().trim();
-                    productCards.forEach(card => {
-                        const productName = card.getAttribute('data-nama').toLowerCase();
-                        card.style.display = productName.includes(searchTerm) ? 'flex' : 'none';
-                    });
+            function filterProducts() {
+                const searchTerm = (searchInput?.value || '').toLowerCase().trim();
+                const selectedJenis = jenisFilter?.value || '';
+
+                productCards.forEach(card => {
+                    const productName = (card.getAttribute('data-nama') || '').toLowerCase();
+                    const productJenis = card.getAttribute('data-jenis') || '';
+                    const matchesSearch = productName.includes(searchTerm);
+                    const matchesJenis = !selectedJenis || productJenis === selectedJenis;
+                    card.style.display = matchesSearch && matchesJenis ? 'flex' : 'none';
                 });
             }
+
+            searchInput?.addEventListener('input', filterProducts);
+            jenisFilter?.addEventListener('change', filterProducts);
         }
 
         function initInputValidation() {
@@ -331,17 +348,7 @@
                         }
 
                         if (val > stokTersedia) {
-                            if (typeof Swal !== 'undefined') {
-                                Swal.fire({
-                                    icon: 'warning',
-                                    title: 'Stok Terbatas',
-                                    text: `Maaf, stok yang tersedia hanya ${stokTersedia} Pcs.`,
-                                    confirmButtonColor: '#319795',
-                                    customClass: { popup: 'rounded-3xl', confirmButton: 'rounded-full text-xs px-6' }
-                                });
-                            } else {
-                                alert(`Maaf, stok yang tersedia hanya ${stokTersedia} Pcs.`);
-                            }
+                            showToast(`Maaf, stok yang tersedia hanya ${stokTersedia} Pcs.`, 'warning');
                             this.value = stokTersedia;
                         }
                     });
@@ -374,17 +381,7 @@
                     ? `Di keranjang sudah ada ${qtyDiKeranjangSaatIni} Pcs. Anda hanya bisa menambah ${sisaBisaDiminta} Pcs lagi.` 
                     : `Permintaan melebihi stok yang tersedia (${stokFisik} Pcs).`;
 
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Stok Tidak Cukup',
-                        text: pesanError,
-                        confirmButtonColor: '#e53e3e',
-                        customClass: { popup: 'rounded-3xl', confirmButton: 'rounded-full text-xs px-6' }
-                    });
-                } else {
-                    alert(pesanError);
-                }
+                showToast(pesanError, 'error');
 
                 inputQtyKatalog.value = sisaBisaDiminta > 0 ? sisaBisaDiminta : 1;
                 return;
@@ -407,19 +404,7 @@
             inputQtyKatalog.value = 1;
             updateDOM();
 
-            if (typeof Swal !== 'undefined') {
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 1500,
-                    timerProgressBar: true
-                });
-                Toast.fire({
-                    icon: 'success',
-                    title: `${namaProduk} ditambahkan`
-                });
-            }
+            showToast(`${namaProduk} ditambahkan`, 'success');
         }
 
         function updateQtyKeranjang(produkId, inputElement) {
@@ -437,16 +422,7 @@
             }
 
             if (newQty > stokMax) {
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Batas Stok',
-                        text: `Stok maksimal produk ini adalah ${stokMax} Pcs.`,
-                        confirmButtonColor: '#319795'
-                    });
-                } else {
-                    alert(`Stok maksimal produk ini adalah ${stokMax} Pcs.`);
-                }
+                showToast(`Stok maksimal produk ini adalah ${stokMax} Pcs.`, 'warning');
                 newQty = stokMax;
                 inputElement.value = stokMax;
             }
@@ -490,18 +466,7 @@
             keranjang = keranjang.filter(item => Number(item.id) !== targetId);
             updateDOM();
 
-            if (typeof Swal !== 'undefined') {
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 1200
-                });
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Item berhasil dihapus'
-                });
-            }
+            showToast('Item berhasil dihapus', 'success');
         }
 
         function updateDOM() {
